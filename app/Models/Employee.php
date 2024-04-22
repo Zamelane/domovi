@@ -2,27 +2,33 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Exceptions\ApiException;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
-use Laravel\Sanctum\HasApiTokens;
 
-class User extends Authenticatable
+class Employee extends Model
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasFactory;
 
     // Заполняемые поля
     protected $fillable = [
+        'login',
         'role_id',
-        'phone_id',
-        'first_name',
+        'password',
         'last_name',
+        'first_name',
         'patronymic',
-        'is_passed_moderation',
-        'is_banned'
+    ];
+
+    // Скрытые поля
+    protected $hidden = [
+        'password'
+    ];
+
+    // Хеширование пароля
+    protected $casts = [
+        'password' => 'hashed'
     ];
 
     static public function getByToken($token)
@@ -30,7 +36,7 @@ class User extends Authenticatable
         $cacheKey = "key:token=$token";
         $user = Cache::remember($cacheKey, 1800, function () use ($token) {
             $authByToken = Auth::where('token', $token)->first();
-            if (!$authByToken || $authByToken->user_id === null)
+            if (!$authByToken || $authByToken->employee_id === null)
                 throw new ApiException(401, 'Invalid token');
             return $authByToken->user;
         });
@@ -47,9 +53,5 @@ class User extends Authenticatable
     public function role()
     {
         return $this->belongsTo(Role::class);
-    }
-    // User <--> Phone
-    public function phone() {
-        return $this->belongsTo(Phone::class);
     }
 }

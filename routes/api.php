@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use \App\Http\Controllers\AuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,6 +15,17 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+Route::controller(AuthController::class)
+    ->prefix('auth')
+    ->group(function ($unauthorized) {
+       $unauthorized->post      ('login',          'loginUser'       );
+       $unauthorized->post      ('login.employee', 'loginEmployee'   );
+       $unauthorized
+           ->prefix('sms')
+           ->group(function ($sms) {
+              $sms->post        ('send',            'sendSMSByNumber');
+           });
+       $unauthorized->middleware('auth.by.token')->group(function ($authorized) {
+           $authorized->get     ('logout',          'logout'         );
+       });
+    });
