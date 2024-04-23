@@ -18,13 +18,21 @@ class AuthController extends Controller
 
         $sms = Sms::getSMSByToken($smsToken);
 
-        if ($sms->code != $smsCode || $sms->attempts <= 0) {
+        if ($sms->code === null)
+            throw new ApiException(401, 'The session has already been completed');
+
+        if ($sms->attempts <= 0)
+            throw new ApiException(401, 'The attempts are over');
+
+        if ($sms->code != $smsCode) {
             $sms->reduceAttempts();
             throw new ApiException(401, 'Invalid sms code');
         }
 
+        $sms->setAsSuccessful();
+
         return response([
-            $sms
+            $sms->code
         ]);
     }
 
@@ -41,10 +49,10 @@ class AuthController extends Controller
             throw new ApiException(429, 'Limitation of sending sms');
         }
 
-
+        $sms = Sms::sendSMS($phone, $ip);
 
         return response([
-            Sms::countMessagesSent($phone, $ip)
+            $sms
         ]);
     }
 }

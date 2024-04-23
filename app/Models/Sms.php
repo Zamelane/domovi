@@ -11,11 +11,12 @@ use Illuminate\Support\Str;
 class Sms extends Model
 {
     use HasFactory;
+    public $timestamps = false;
 
     // Заполняемые поля
     protected $fillable = [
         'token',
-        'phone_id',
+        'phone',
         'code',
         'ip',
         'attempts',
@@ -25,19 +26,22 @@ class Sms extends Model
     // Скрытые поля
     protected $hidden = [
         'code',
-        'phone_id',
-        'datetime_sending',
-        'ip'
+        'id'
     ];
 
     public static function getSMSByToken($token) {
         $cacheKey = "sms:token=$token";
-        return Cache::remember($cacheKey, 360, function () use ($token) {
-           $sms = Sms::where('token', $token)->first();
-           if (!$sms)
-               throw new ApiException(401, 'Invalid sms token');
-           return $sms;
-        });
+        $sms = Cache::get($cacheKey);
+
+        if (!$sms)
+            $sms = Sms::where('token', $token)->first();
+
+        if (!$sms)
+            throw new ApiException(401, 'Invalid sms token');
+
+        Cache::put($cacheKey, $sms, 360);
+
+        return $sms;
     }
 
     public function reduceAttempts() {
@@ -45,40 +49,61 @@ class Sms extends Model
 
         if ($this->attempts > 0) {
             $this->attempts--;
-            $this->save();
+            Sms::where('token', $this->token)->update(['attempts' => $this->attempts]);
         }
 
-        Cache::put($cacheKey, 360);
+        Cache::put($cacheKey, $this);
+    }
+
+    public function setAsSuccessful() {
+        $cacheKey = "sms:token=$this->token";
+
+        if ($this->code != null) {
+            $this->code = null;
+            Sms::where('token', $this->token)->update(['code' => $this->null]);
+        }
+
+        Cache::put($cacheKey, $this);
     }
 
     public static function countMessagesSent($phone, $ip = null)
     {
-        return Sms::leftJoin('phones', 'sms.phone_id', '=', 'phones.id')
-            ->orWhere([
-                ['phones.phone', '=', $phone],
-                ['ip', '=', $ip]
-            ])
-            ->where(
-                'sms.datetime_sending', '>=', (new \DateTime('-1 day'))->format('Y-m-d H:i:s')
-            )->count();
+        return Sms::where('datetime_sending', '>=', (new \DateTime('-1 day'))->format('Y-m-d H:i:s'))
+            ->where(function ($q) use ($ip, $phone) {
+                $q->where('phone', '=', $phone)
+                    ->orWhere('ip', '=', $ip);
+            })->count();
     }
 
-    // TODO: Додулать тут и в AuthController
+    // TODO: Доделать тут и в AuthController
     public static function sendSMS($phone, $ip = null) {
         $token = Str::random(25);
-        $sms = Sms::create([
+        $code = Str::random(6);
+        return Sms::create([
             'token' => $token,
-            'phone_id' => $phone,
+            'phone' => $phone,
+            'code' => $code,
             'ip' => $ip,
             'attempts' => 3,
             'datetime_sending' => date('Y-m-d H:i:s')
         ]);
     }
 
-    /** Связи **/
-    // SMS <--> Phone
-    public function phone()
+    // Связанный с смс пользователь
+    public function user()
     {
-        return $this->belongsTo(Phone::class);
+        $phoneNumber = $this->phone;
+        $cacheKey = "user:phone=$phoneNumber";
+
+        $user = Cache::get($cacheKey);
+
+        if ($user)
+            return $user;
+
+        $user = User::where('phone', $phoneNumber);
+
+        if($user)
+            Cache::put($cacheKey, $user, 360);
+        return $user;
     }
 }

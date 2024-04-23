@@ -13,11 +13,12 @@ use Laravel\Sanctum\HasApiTokens;
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
+    public $timestamps = false;
 
     // Заполняемые поля
     protected $fillable = [
         'role_id',
-        'phone_id',
+        'phone',
         'first_name',
         'last_name',
         'patronymic',
@@ -27,14 +28,15 @@ class User extends Authenticatable
 
     static public function getByToken($token)
     {
-        $cacheKey = "key:token=$token";
-        $user = Cache::remember($cacheKey, 1800, function () use ($token) {
-            $authByToken = Auth::where('token', $token)->first();
-            if (!$authByToken || $authByToken->user_id === null)
-                throw new ApiException(401, 'Invalid token');
-            return $authByToken->user;
-        });
-        return $user;
+        $authByToken = Auth::where('token', $token)->first();
+        if (!$authByToken || $authByToken->user_id === null)
+            throw new ApiException(401, 'Invalid token');
+        return $authByToken->user;
+    }
+
+    public static function getByPhone($phone)
+    {
+        return User::where('phone', $phone)->first();
     }
 
     /** Связи **/
@@ -47,9 +49,5 @@ class User extends Authenticatable
     public function role()
     {
         return $this->belongsTo(Role::class);
-    }
-    // User <--> Phone
-    public function phone() {
-        return $this->belongsTo(Phone::class);
     }
 }

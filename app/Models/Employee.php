@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Cache;
 class Employee extends Model
 {
     use HasFactory;
+    public $timestamps = false;
 
     // Заполняемые поля
     protected $fillable = [
@@ -19,6 +20,8 @@ class Employee extends Model
         'last_name',
         'first_name',
         'patronymic',
+        'phone',
+        'is_banned'
     ];
 
     // Скрытые поля

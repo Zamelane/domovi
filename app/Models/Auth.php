@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Auth extends Model
 {
     use HasFactory;
+    public $timestamps = false;
 
     // Заполняемые поля
     protected $fillable = [

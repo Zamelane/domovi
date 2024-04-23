@@ -12,12 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('sms', function (Blueprint $table) {
-            $table->string('token', 25)->primary();
-            $table->string('code', 6);
-            $table->string('ip', 15);
-            $table->tinyInteger('attempts');
-            $table->dateTime('datetime_sending');
-            $table->foreignId('phone_id')->constrained()->cascadeOnUpdate();
+            $table->string      ('token', 25)->primary();
+            $table->string      ('code', 6)->nullable();
+            $table->string      ('ip', 15);
+            $table->bigInteger  ('phone');
+            $table->tinyInteger ('attempts');
+            $table->dateTime    ('datetime_sending')->useCurrent();
         });
     }
 

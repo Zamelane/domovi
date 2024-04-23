@@ -13,13 +13,13 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string   ('first_name', 45);
-            $table->string   ('last_name', 45);
-            $table->string   ('patronymic', 45);
-            $table->boolean  ('is_passed_moderation');
-            $table->boolean  ('is_banned');
-            $table->foreignId('phone_id')->constrained()->cascadeOnUpdate();
-            $table->foreignId('role_id')->constrained()->cascadeOnUpdate();
+            $table->string    ('first_name', 45);
+            $table->string    ('last_name', 45);
+            $table->string    ('patronymic', 45)->nullable();
+            $table->bigInteger('phone')->unique();
+            $table->boolean   ('is_passed_moderation')->default(false);
+            $table->boolean   ('is_banned')->default(false);
+            $table->foreignId ('role_id')->constrained()->cascadeOnUpdate();
         });
     }
 
