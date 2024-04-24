@@ -11,9 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('roles', function (Blueprint $table) {
-            $table->id();
-            $table->string('code', 32)->unique();
+        Schema::create('filter_values', function (Blueprint $table) {
+            $table->foreignId('filter_id');
+            $table->string('value', 32);
+            $table->primary(['filter_id', 'value']);
             $table->timestamps();
         });
     }
@@ -23,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('roles');
+        Schema::dropIfExists('filter_values');
     }
 };

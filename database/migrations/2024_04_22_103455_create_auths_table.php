@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('auths', function (Blueprint $table) {
             $table->string('token', 32)->primary();
             $table->foreignId('user_id')->constrained()->cascadeOnUpdate();
-            $table->foreignId('employee_id')->constrained()->cascadeOnUpdate();
+            $table->timestamps();
         });
     }
 

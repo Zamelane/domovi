@@ -11,9 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('roles', function (Blueprint $table) {
+        Schema::create('streets', function (Blueprint $table) {
             $table->id();
-            $table->string('code', 32)->unique();
+            $table->string('name', 255);
+            $table->foreignId('city_id')->constrained()->cascadeOnUpdate();
             $table->timestamps();
         });
     }
@@ -23,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('roles');
+        Schema::dropIfExists('streets');
     }
 };

@@ -11,9 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('roles', function (Blueprint $table) {
+        Schema::create('complaints', function (Blueprint $table) {
             $table->id();
-            $table->string('code', 32)->unique();
+            $table->foreignId('user_id')->constrained()->cascadeOnUpdate();
+            $table->foreignId('advertisement_id')->constrained()->cascadeOnUpdate();
+            $table->text('description');
+            $table->boolean('is_review');
             $table->timestamps();
         });
     }
@@ -23,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('roles');
+        Schema::dropIfExists('complaints');
     }
 };

@@ -11,9 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('roles', function (Blueprint $table) {
+        Schema::create('advertisement_types', function (Blueprint $table) {
             $table->id();
-            $table->string('code', 32)->unique();
+            $table->string('name', 45);
+            $table->boolean('is_commercial');
             $table->timestamps();
         });
     }
@@ -23,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('roles');
+        Schema::dropIfExists('advertisement_types');
     }
 };

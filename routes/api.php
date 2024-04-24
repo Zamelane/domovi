@@ -20,8 +20,7 @@ Route::controller(AuthController::class)
     ->group(function ($unauthorized) {
        $unauthorized->post      ('login',          'loginUser'       );
        $unauthorized->post      ('login.employee', 'loginEmployee'   );
-       $unauthorized
-           ->prefix('sms')
+       $unauthorized->prefix('sms')
            ->group(function ($sms) {
               $sms->post        ('send',            'sendSMSByNumber');
            });

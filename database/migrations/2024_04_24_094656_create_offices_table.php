@@ -11,9 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('roles', function (Blueprint $table) {
+        Schema::create('offices', function (Blueprint $table) {
             $table->id();
-            $table->string('code', 32)->unique();
+            $table->string('name', 75)->nullable();
+            $table->time('open_time');
+            $table->time('close_time');
+            $table->string('work_days');
+            $table->boolean('is_active');
+            $table->foreignId('address_id')->constrained()->cascadeOnUpdate();
             $table->timestamps();
         });
     }
@@ -23,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('roles');
+        Schema::dropIfExists('offices');
     }
 };
