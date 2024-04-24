@@ -5,13 +5,23 @@ namespace App\Http\Controllers;
 use App\Exceptions\ApiException;
 use App\Http\Requests\Auth\LoginUserRequest;
 use App\Http\Requests\Auth\SMSSendRequest;
+use App\Http\Resources\Users\UserResource;
 use App\Models\Sms;
+use App\Models\User;
 use Request;
 
 class AuthController extends Controller
 {
     public function loginUser(LoginUserRequest $request)
     {
+        /*$credentials = request(['login', 'password']);
+
+        if (! $token = auth()->attempt($credentials)) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+
+        return $this->respondWithToken($token);*/
+
         // Получаем токен смс-подтверждения и код для проверки
         $smsToken = $request->get('sms_token');
         $smsCode = $request->get('code');
@@ -31,8 +41,15 @@ class AuthController extends Controller
 
         $sms->setAsSuccessful();
 
+        $user = User::getByPhone($sms->phone);
+
+        if (!$user) {
+            return response()->json(['error' => 'User is not registered'], 401);
+        }
+
         return response([
-            $sms->code
+            'token' => auth()->login($user),
+            'userdata' => UserResource::make($user)
         ]);
     }
 
@@ -54,5 +71,15 @@ class AuthController extends Controller
         return response([
             $sms
         ]);
+    }
+
+    /**
+     * Get the authenticated User.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function me()
+    {
+        return response()->json(auth()->user());
     }
 }

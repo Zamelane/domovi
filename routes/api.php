@@ -24,7 +24,8 @@ Route::controller(AuthController::class)
            ->group(function ($sms) {
               $sms->post        ('send',            'sendSMSByNumber');
            });
-       $unauthorized->middleware('auth.by.token')->group(function ($authorized) {
+       $unauthorized->middleware('auth')->group(function ($authorized) {
            $authorized->get     ('logout',          'logout'         );
+           $authorized->post    ('me',              'me'             );
        });
     });
