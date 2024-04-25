@@ -25,17 +25,11 @@ class UserResource extends JsonResource
 
         $role = Role::find($this->role_id)->code;
         if ($role !== 'user') {
-            $response = [
-                ...$response,
-                'login' => $this->login,
-                'password' => $this->password
-            ];
+            $response["login"] = $this->login;
+            $response["password"] = $this->password;
         }
 
-        $response = [
-            ...$response,
-            'role' => $role->code
-        ];
+        $response["role"] = $role;
 
         return $response;
     }
