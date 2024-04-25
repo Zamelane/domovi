@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('deal_id')->constrained()->cascadeOnUpdate();
             $table->string('path', 255);
-            $table->timestamps();
+            // $table->timestamps();
         });
     }
 

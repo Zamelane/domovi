@@ -18,7 +18,7 @@ return new class extends Migration
             $table->bigInteger  ('phone');
             $table->tinyInteger ('attempts');
             $table->dateTime    ('datetime_sending')->useCurrent();
-            $table->timestamps();
+            // $table->timestamps();
         });
     }
 

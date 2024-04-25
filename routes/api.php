@@ -2,7 +2,8 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use \App\Http\Controllers\AuthController;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,17 +16,30 @@ use \App\Http\Controllers\AuthController;
 |
 */
 
+// TODO: Выводить красивые ошибки для неопознанных роутов
+
 Route::controller(AuthController::class)
     ->prefix('auth')
     ->group(function ($unauthorized) {
-       $unauthorized->post      ('login',          'loginUser'       );
-       $unauthorized->post      ('login.employee', 'loginEmployee'   );
-       $unauthorized->prefix('sms')
-           ->group(function ($sms) {
-              $sms->post        ('send',            'sendSMSByNumber');
-           });
+       $unauthorized->post      ('login.user',         'loginUser'       );
+       $unauthorized->post      ('confirm.login',      'confirmLogin'    );
+       $unauthorized->post      ('login.employee',     'loginEmployee'   );
+       $unauthorized->post      ('signup',             'signup'          );
        $unauthorized->middleware('auth')->group(function ($authorized) {
-           $authorized->get     ('logout',          'logout'         );
-           $authorized->post    ('me',              'me'             );
+           $authorized->get     ('logout',             'logout'          );
+           $authorized->post    ('me',                 'me'              );
        });
     });
+
+Route::group([
+    "controller" => UserController::class,
+    "middleware" => "auth",
+    "prefix" => "users"
+], function ($auth) {
+    $auth->get('',       'list'  );
+    $auth->get('me',     'me'    );
+    $auth->get('search', 'search');
+    $auth->prefix('{id}')->group(function ($auth) {
+        $auth->get('', 'show')->where('id', '[0-9]+');
+    });
+});

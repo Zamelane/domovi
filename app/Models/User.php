@@ -35,17 +35,30 @@ class User extends Authenticatable implements JWTSubject
         'password'
     ];
 
-    static public function getByToken($token)
-    {
-        $authByToken = Auth::where('token', $token)->first();
-        if (!$authByToken || $authByToken->user_id === null)
-            throw new ApiException(401, 'Invalid token');
-        return $authByToken->user;
-    }
-
     public static function getByPhone($phone)
     {
         return User::where('phone', $phone)->first();
+    }
+
+    public static function getEmployeeByCredentials($credentials)
+    {
+        return User::join('roles', 'users.role_id', '=', 'roles.id')
+            ->where($credentials)
+            ->where(function ($q) {
+                $q->where('roles.code', 'admin')
+                    ->orWhere('roles.code', 'manager');
+            })
+            ->first();
+    }
+
+    public static function searchByParams($params)
+    {
+        $wheres = [];
+        foreach ($params as $key => $value) {
+            $wheres[] = [$key, 'LIKE', "%$value%"];
+        }
+
+        return User::where($wheres)->simplePaginate(15);
     }
 
     /** Связи **/

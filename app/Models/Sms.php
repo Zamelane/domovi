@@ -75,8 +75,14 @@ class Sms extends Model
             })->count();
     }
 
-    // TODO: Доделать тут и в AuthController
     public static function sendSMS($phone, $ip = null) {
+        // Подсчитываем отправленные смс
+        $countMessagesSent = Sms::countMessagesSent($phone, $ip);
+
+        // Если отправлено больше 5 сообщений за день, то выбрасываем ошибку 429
+        if ($countMessagesSent > 5)
+            throw new ApiException(429, 'Limitation of sending sms');
+
         $token = Str::random(25);
         $code = Str::random(6);
         return Sms::create([
@@ -87,6 +93,25 @@ class Sms extends Model
             'attempts' => 3,
             'datetime_sending' => date('Y-m-d H:i:s')
         ]);
+    }
+
+    public static function verify($smsToken, $smsCode) {
+        $sms = Sms::getSMSByToken($smsToken);
+
+        if ($sms->code === null)
+            throw new ApiException(401, 'The session has already been completed');
+
+        if ($sms->attempts <= 0)
+            throw new ApiException(401, 'The attempts are over');
+
+        if ($sms->code != $smsCode) {
+            $sms->reduceAttempts();
+            throw new ApiException(401, 'Invalid sms code');
+        }
+
+        $sms->setAsSuccessful();
+
+        return $sms->phone;
     }
 
     // Связанный с смс пользователь

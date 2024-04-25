@@ -15,7 +15,7 @@ return new class extends Migration
             $table->foreignId('filter_id');
             $table->foreignId('advertisement_type_id');
             $table->primary(['filter_id', 'advertisement_type_id']);
-            $table->timestamps();
+            // $table->timestamps();
         });
     }
 

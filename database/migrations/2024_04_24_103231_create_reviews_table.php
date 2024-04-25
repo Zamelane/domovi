@@ -21,7 +21,7 @@ return new class extends Migration
             $table->dateTime('update_datetime')->nullable();
             $table->boolean('is_moderation');
             $table->boolean('is_services');
-            $table->timestamps();
+            // $table->timestamps();
         });
     }
 

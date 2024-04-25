@@ -23,7 +23,7 @@ return new class extends Migration
             $table->string('name', 255);
             $table->enum('type', $filter_types);
             $table->foreignId('photo_id')->constrained()->cascadeOnUpdate();
-            $table->timestamps();
+            // $table->timestamps();
         });
     }
 

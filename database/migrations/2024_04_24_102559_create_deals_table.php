@@ -21,7 +21,7 @@ return new class extends Migration
             $table->date('create_date');
             $table->date('start_date')->nullable();
             $table->date('valid_until_date')->nullable();
-            $table->timestamps();
+            // $table->timestamps();
         });
     }
 

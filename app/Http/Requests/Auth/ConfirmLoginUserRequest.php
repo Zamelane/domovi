@@ -4,12 +4,13 @@ namespace App\Http\Requests\Auth;
 
 use App\Http\Requests\ApiRequest;
 
-class SMSSendRequest extends ApiRequest
+class ConfirmLoginUserRequest extends ApiRequest
 {
     public function rules(): array
     {
         return [
-            'phone' => 'required|string|min:6|max:15'
+            'sms_token' => 'required|string|min:8',
+            'code' => 'required|string|min:6|max:6'
         ];
     }
 }

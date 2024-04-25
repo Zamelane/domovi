@@ -39,7 +39,7 @@ return new class extends Migration
             $table->boolean    ('is_deleted'                          )->default(false);
             $table->boolean    ('is_archive'                          )->default(false);
             $table->decimal    ('cost', 16                        );
-            $table->timestamps();
+            // $table->timestamps();
         });
     }
 

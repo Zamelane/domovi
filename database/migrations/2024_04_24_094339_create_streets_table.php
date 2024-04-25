@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name', 255);
             $table->foreignId('city_id')->constrained()->cascadeOnUpdate();
-            $table->timestamps();
+            // $table->timestamps();
         });
     }
 

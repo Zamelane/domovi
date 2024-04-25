@@ -22,7 +22,7 @@ return new class extends Migration
             $table->boolean   ('is_passed_moderation')->default(false);
             $table->boolean   ('is_banned')->default(false);
             $table->foreignId ('role_id')->constrained()->cascadeOnUpdate();
-            $table->timestamps();
+            // $table->timestamps();
         });
     }
 

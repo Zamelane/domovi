@@ -15,7 +15,7 @@ return new class extends Migration
             $table->foreignId('filter_id');
             $table->string('value', 32);
             $table->primary(['filter_id', 'value']);
-            $table->timestamps();
+            // $table->timestamps();
         });
     }
 

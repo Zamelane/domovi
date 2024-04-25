@@ -15,7 +15,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->cascadeOnUpdate();
             $table->foreignId('advertisement_id')->constrained()->cascadeOnUpdate();
             $table->primary(['user_id', 'advertisement_id']);
-            $table->timestamps();
+            // $table->timestamps();
         });
     }
 

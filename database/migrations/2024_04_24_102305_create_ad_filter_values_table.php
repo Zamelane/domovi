@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('advertisement_id')->constrained()->cascadeOnUpdate()->cascadeOnDelete();
             $table->string('value', 32);
             $table->primary(['filter_id', 'advertisement_id']);
-            $table->timestamps();
+            // $table->timestamps();
         });
     }
 

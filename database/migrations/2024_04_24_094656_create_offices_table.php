@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('work_days');
             $table->boolean('is_active');
             $table->foreignId('address_id')->constrained()->cascadeOnUpdate();
-            $table->timestamps();
+            // $table->timestamps();
         });
     }
 

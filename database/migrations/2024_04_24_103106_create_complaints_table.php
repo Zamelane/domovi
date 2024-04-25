@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreignId('advertisement_id')->constrained()->cascadeOnUpdate();
             $table->text('description');
             $table->boolean('is_review');
-            $table->timestamps();
+            // $table->timestamps();
         });
     }
 

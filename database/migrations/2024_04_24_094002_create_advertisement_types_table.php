@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name', 45);
             $table->boolean('is_commercial');
-            $table->timestamps();
+            // $table->timestamps();
         });
     }
 

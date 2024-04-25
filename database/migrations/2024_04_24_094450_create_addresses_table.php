@@ -18,7 +18,7 @@ return new class extends Migration
             $table->tinyInteger('building')->nullable();
             $table->integer('apartament')->nullable();
             $table->foreignId('street_id')->constrained()->cascadeOnUpdate();
-            $table->timestamps();
+            // $table->timestamps();
         });
     }
 
