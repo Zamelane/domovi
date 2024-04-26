@@ -10,14 +10,7 @@ use JWTAuth;
 
 class AuthByToken
 {
-    private $levels = [
-        'guest',
-        'user',
-        'owner',
-        'manager',
-        'admin'
-    ];
-    public function handle(Request $request, Closure $next, $allowedLevel = 'guest')
+    public function handle(Request $request, Closure $next)
     {
         // Bearer токен из запроса
         try {
@@ -28,20 +21,6 @@ class AuthByToken
             else
                 throw new ApiException(401, 'Token is Invalid');
         }
-
-        if ($allowedLevel !== 'guest')
-            throw new ApiException(401, 'Token not provided');
-
-        // Определяем уровень доступа пользователя
-        $userRole = $user->role->code;
-        $userAllowedLevel = array_search($userRole, $this->levels);
-
-        // Определяем минимальный уровень доступа
-        $allowedLevel = array_search($allowedLevel, $this->levels);
-
-        // Если у пользователя уровень доступности ниже заданного, то выводим 403 ошибку
-        if ($userAllowedLevel < $allowedLevel)
-            throw new ApiException(403, 'Forbidden for you');
 
         // Записываем пользователя в запрос для последующих обработок в контроллерах
         $request->setUserResolver(function () use ($user) {

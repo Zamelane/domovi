@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string    ('login', 45)->nullable();
             $table->string    ('password', 255)->nullable();
             $table->bigInteger('phone')->unique();
-            $table->boolean   ('is_passed_moderation')->default(false);
+            $table->boolean   ('is_passed_moderation')->nullable()->default(false);
             $table->boolean   ('is_banned')->default(false);
             $table->foreignId ('role_id')->constrained()->cascadeOnUpdate();
             // $table->timestamps();

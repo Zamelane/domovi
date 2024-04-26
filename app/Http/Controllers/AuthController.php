@@ -13,6 +13,7 @@ use App\Http\Resources\Users\UserResource;
 use App\Models\Role;
 use App\Models\Sms;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Request;
 
 class AuthController extends Controller
@@ -24,6 +25,7 @@ class AuthController extends Controller
 
         // Ищем пользователя по номеру телефона
         $user = User::getByPhone($phone);
+        User::checkAvailable($user);
 
         if (!$user)
             throw new InvalidAuthData();
@@ -43,6 +45,7 @@ class AuthController extends Controller
         $phone = Sms::verify($smsToken, $smsCode);
 
         $user = User::getByPhone($phone);
+        User::checkAvailable($user);
 
         if (!$user) {
             return response()->json(['error' => 'User is not registered'], 401);
@@ -56,14 +59,18 @@ class AuthController extends Controller
     public function loginEmployee(LoginEmployeeRequest $request)
     {
         $credentials = request(['login', 'password']);
+        if (!Auth::attempt($credentials))
+            throw new InvalidAuthData();
 
-        $employee = User::getEmployeeByCredentials($credentials);
+        $user = Auth::user();
+        User::checkAvailable($user);
+        $role = $user->role->code;
 
-        if (!$employee)
+        if ($role === "user" || $role === "owner")
             throw new InvalidAuthData();
 
         return response([
-            'token' => auth()->login($employee)
+            'token' => auth()->login($user)
         ]);
     }
 
@@ -72,26 +79,34 @@ class AuthController extends Controller
         $smsToken = $request->input('sms_token');
         $smsCode = $request->input('code');
 
+        // Если нет данных для подтверждения номера, то просим его пройти
         if (!$smsToken || !$smsCode) {
             $sms = Sms::sendSMS($request->get('phone'), Request::ip());
             return response($sms);
         }
 
+        // Если идёт регистрация с подтверждением номера, то првоеряем код от смс
         Sms::verify($smsToken, $smsCode);
 
+        // Если код проверен, то подготавливаем роль пользователя
         $role =  $request->input('role') ?? "user";
         $roleId = Role::firstOrCreate(['code' => $role])->id;
 
+        // Регистрируем пользователя в системе
         $user = User::create([
             ...$request->all(),
             'role_id' => $roleId
         ]);
 
+        // Отдаём данные для авторизации
         return response([
             "token" => auth()->login($user)
         ])->setStatusCode(201);
     }
 
+    /**
+     * Завершение сеанса пользователя
+     */
     public function logout(Request $request)
     {
         auth()->invalidate(true);

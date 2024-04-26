@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Exceptions\ApiException;
+use App\Exceptions\YouBannedException;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -32,23 +33,12 @@ class User extends Authenticatable implements JWTSubject
     ];
 
     protected $casts = [
-        'password'
+        'password' => 'hashed'
     ];
 
     public static function getByPhone($phone)
     {
         return User::where('phone', $phone)->first();
-    }
-
-    public static function getEmployeeByCredentials($credentials)
-    {
-        return User::join('roles', 'users.role_id', '=', 'roles.id')
-            ->where($credentials)
-            ->where(function ($q) {
-                $q->where('roles.code', 'admin')
-                    ->orWhere('roles.code', 'manager');
-            })
-            ->first();
     }
 
     public static function searchByParams($params)
@@ -59,6 +49,15 @@ class User extends Authenticatable implements JWTSubject
         }
 
         return User::where($wheres)->simplePaginate(15);
+    }
+
+    public static function checkAvailable(User $user) {
+        if ($user->is_banned)
+            throw new YouBannedException();
+        if ($user->is_passed_moderation == null)
+            throw new ApiException(401, 'You process moderated');
+        if ($user->is_passed_moderation == false)
+            throw new ApiException(401, 'You have not passed moderation');
     }
 
     /** Связи **/
