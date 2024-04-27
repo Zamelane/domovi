@@ -2,21 +2,32 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\ApiException;
 use App\Exceptions\ForbiddenYouException;
 use App\Exceptions\NotFoundException;
 use App\Http\Requests\Advertisement\AdvertisementCreateRequest;
 use App\Http\Resources\Advertisements\AdvertisementResource;
 use App\Models\Address;
 use App\Models\Advertisement;
+use App\Models\AdvertisementTypeFilter;
 use App\Models\City;
 use App\Models\Photo;
 use App\Models\Street;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 
 class AdvertisementController extends Controller
 {
     public function create(AdvertisementCreateRequest $request) {
+        // Проверяем фильтры
+        $filtersRules = AdvertisementTypeFilter::getFilters($request->advertisement_type_id);
+        if ($filtersRules) {
+            $validator = Validator::make($request->all(), $filtersRules);
+            if ($validator->fails())
+                throw new ApiException(422, 'Request validation error', $validator->errors());
+        }
+        // Продолжаем создание объявления
         $currUser = auth()->user();
         //$advertisement_type_id = AdvertisementType::find($request->advertisement_type_id);
         $cityId = City::firstOrCreate(['name' => $request->city])->id;
@@ -47,6 +58,8 @@ class AdvertisementController extends Controller
 
             $image = Photo::firstOrCreate(["name" => $imageName, "advertisement_id" => $advertisement->id]);
         }
+
+        AdvertisementTypeFilter::saveFiltersToAd($advertisement->id, $filtersRules, $request);
 
         return response(AdvertisementResource::make($advertisement), 201);
     }

@@ -15,12 +15,14 @@ return new class extends Migration
         $filter_types = [
             'select',
             'write_text',
-            'write_number'
+            'write_number',
+            'summer_number'
         ];
 
         Schema::create('filters', function (Blueprint $table) use ($filter_types) {
             $table->id();
             $table->string('name', 255);
+            $table->string('code', 35)->unique();
             $table->enum('type', $filter_types);
             // $table->timestamps();
         });

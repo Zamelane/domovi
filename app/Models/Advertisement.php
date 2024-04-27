@@ -47,5 +47,8 @@ class Advertisement extends Model
     {
         return $this->hasMany(Photo::class);
     }
-
+    public function ad_filter_values()
+    {
+        return $this->hasMany(AdFilterValue::class);
+    }
 }
