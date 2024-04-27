@@ -4,8 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Exceptions\ApiException;
 use App\Exceptions\ForbiddenYouException;
-use App\Http\Requests\User\CreateUserRequest;
-use App\Http\Requests\User\EditUserRequest;
+use App\Exceptions\NotFoundException;
+use App\Http\Requests\User\UserCreateRequest;
+use App\Http\Requests\User\UserEditRequest;
 use App\Http\Requests\User\UserRequest;
 use App\Http\Resources\Users\UserResource;
 use App\Models\Role;
@@ -30,7 +31,7 @@ class UserController extends Controller
         $user = User::find($id);
 
         if (!$user)
-            throw new ApiException(401, 'User not found');
+            throw new NotFoundException("User");
 
         if (auth()->user()->role->code === 'user') {
             if ($user->role->code === 'admin')
@@ -52,12 +53,12 @@ class UserController extends Controller
         return response(UserResource::collection(User::searchByParams($searchParams)));
     }
 
-    public function edit(EditUserRequest $request, int $id = null)
+    public function edit(UserEditRequest $request, int $id = null)
     {
         if ($id) {
             $editUser = User::find($id);
             if (!$editUser)
-                throw new NotFoundHttpException();
+                throw new NotFoundException("User");
         } else {
             $editUser = auth()->user();
         }
@@ -84,7 +85,7 @@ class UserController extends Controller
         return response(null, 202);
     }
 
-    public function create(CreateUserRequest $request)
+    public function create(UserCreateRequest $request)
     {
         // Если пытаемся создать работника,то валидируем заполнение ВСЕХ ПОЛЕЙ
         $role = $request->role ?? "user";

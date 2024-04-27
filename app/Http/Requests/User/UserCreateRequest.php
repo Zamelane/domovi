@@ -5,7 +5,7 @@ namespace App\Http\Requests\User;
 use App\Http\Requests\ApiRequest;
 use Illuminate\Foundation\Http\FormRequest;
 
-class CreateUserRequest extends ApiRequest
+class UserCreateRequest extends ApiRequest
 {
     public function rules(): array
     {

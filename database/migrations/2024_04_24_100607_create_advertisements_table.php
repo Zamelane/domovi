@@ -17,8 +17,8 @@ return new class extends Migration
         ];
 
         $measurement_types = [
-            'km',
-            'm^2'
+            'ar',
+            'm2'
         ];
 
         Schema::create('advertisements', function (Blueprint $table) use(
@@ -34,7 +34,7 @@ return new class extends Migration
             $table->integer    ('area'                                );
             $table->tinyInteger('count_rooms'                         )->nullable();
             $table->enum       ('measurement_type', $measurement_types);
-            $table->boolean    ('is_active'                           )            ->default(true);
+            $table->boolean    ('is_active'                           )            ->default(false);
             $table->boolean    ('is_moderated'                        )->nullable()->default(null);
             $table->boolean    ('is_deleted'                          )->default(false);
             $table->boolean    ('is_archive'                          )->default(false);

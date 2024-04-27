@@ -20,7 +20,7 @@ class UserResource extends JsonResource
             'phone' => $this->phone,
             'first_name' => $this->first_name,
             'last_name' => $this->last_name,
-            'middle_name' => $this->middle_name
+            'patronymic' => $this->patronymic
         ];
 
         $role = Role::find($this->role_id)->code;

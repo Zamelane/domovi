@@ -34,16 +34,17 @@ class RoleChecker
             $searchUp = $allowedLevel[0];
             $allowedOperations = ["^", "_"];
             if (array_search($searchUp, $allowedOperations) === false) {
-                $searchUp = "^";
+                $searchUp = "=";
             }
-            $allowedLevel = array_search(str_replace(["^", "_"], "", $allowedLevel), $this->levels);
+            $allowedLevel = array_search(str_replace(["^", "_", "="], "", $allowedLevel), $this->levels);
             // Определяем уровень доступа пользователя
             $userAllowedLevel = array_search($userRole, $this->levels);
 
             // Если у пользователя уровень доступности ниже заданного, то выводим 403 ошибку
             if ($searchUp === "^" && $userAllowedLevel < $allowedLevel
                 || $searchUp === "^^" && $userAllowedLevel <= $allowedLevel
-                || $searchUp === "_" && $userAllowedLevel > $allowedLevel)
+                || $searchUp === "_" && $userAllowedLevel > $allowedLevel
+                || $searchUp === "=" && $userAllowedLevel != $allowedLevel)
                 $block = true;
         }
 

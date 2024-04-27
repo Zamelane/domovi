@@ -3,15 +3,37 @@
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\AdvertisementType;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
-    /**
-     * Seed the application's database.
-     */
+    protected $notCommercialTypes = [
+        "Квартира во вторичке",
+        "Квартира в новостройке",
+        "Комната",
+        "Дом, дача",
+        "Часть дома",
+        "Таунхаус",
+        "Участок",
+        "Гараж"
+    ];
+    protected $commercialTypes = [
+        "Офис",
+        "Торговая площадь",
+        "Склад",
+        "Помещение свободного назначения",
+        "Общепит",
+        "Производство",
+        "Автосервис",
+        "Здание",
+        "Бытовые услуги",
+        "Арендный бизнес",
+        "Готовый бизнес",
+        "Коммерческая земля"
+    ];
     public function run(): void
     {
         $roleAdminId   = Role::firstOrCreate(['code' => 'admin'  ])->id;
@@ -66,5 +88,16 @@ class DatabaseSeeder extends Seeder
             'is_banned' => false,
             'role_id' => $roleUserId
         ]);
+
+        foreach ($this->notCommercialTypes as $type)
+            AdvertisementType::create([
+                "name" => $type,
+                "is_commercial" => false
+            ]);
+        foreach ($this->commercialTypes as $type)
+            AdvertisementType::create([
+                "name" => $type,
+                "is_commercial" => true
+            ]);
     }
 }
