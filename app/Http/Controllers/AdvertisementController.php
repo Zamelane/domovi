@@ -21,7 +21,7 @@ class AdvertisementController extends Controller
 {
     public function create(AdvertisementCreateRequest $request) {
         // Проверяем фильтры
-        $filtersRules = AdvertisementTypeFilter::getFilters($request->advertisement_type_id);
+        $filtersRules = FilterController::getFiltersRules($request->advertisement_type_id);
         if ($filtersRules) {
             $validator = Validator::make($request->all(), $filtersRules);
             if ($validator->fails())
@@ -56,10 +56,11 @@ class AdvertisementController extends Controller
             if (!Storage::exists($path.$imageName))
                 $file->move  ($path,$imageName );
 
-            $image = Photo::firstOrCreate(["name" => $imageName, "advertisement_id" => $advertisement->id]);
+            Photo::firstOrCreate(["name" => $imageName, "advertisement_id" => $advertisement->id]);
         }
 
-        AdvertisementTypeFilter::saveFiltersToAd($advertisement->id, $filtersRules, $request);
+        // Сохраняем значения фильтров
+        FilterController::saveFiltersToAd($advertisement->id, $filtersRules, $request);
 
         return response(AdvertisementResource::make($advertisement), 201);
     }

@@ -10,6 +10,7 @@ use App\Models\FilterValue;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Str;
 
 class DatabaseSeeder extends Seeder
 {
@@ -27,26 +28,35 @@ class DatabaseSeeder extends Seeder
         "Офис",
         "Коммерческая земля"
     ];
+    protected $adminLogin = "chernov-nm";
+    protected $adminPassword = "chernov!";
     public function run(): void
     {
+        $this->adminPassword = Str::random(10);
+        $this->command->info('Creating roles...');
         // Роли
         $roleAdminId   = Role::firstOrCreate(['code' => 'admin'  ])->id;
         $roleManagerId = Role::firstOrCreate(['code' => 'manager'])->id;
         $roleOwnerId   = Role::firstOrCreate(['code' => 'owner'  ])->id;
         $roleUserId    = Role::firstOrCreate(['code' => 'user'   ])->id;
 
+        $this->command->info("Creating users...");
         // Пользователи
-        User::create([
+        $admin = User::create([
             'first_name' => 'Чернов',
             'last_name' => 'Николай',
             'patronymic' => 'Михайлович',
             'phone' => 89994355644,
-            'login' => 'chernov-nm',
-            'password' => 'chernov!',
+            'login' => $this->adminLogin,
+            'password' => $this->adminPassword,
             'is_passed_moderation' => true,
             'is_banned' => false,
             'role_id' => $roleAdminId
         ]);
+        $this->command->alert("\nUser admin created! Log in with the following credentials:"
+            . "\nlogin: {$this->adminLogin}"
+            . "\npassword: {$this->adminPassword}\n"
+        );
 
         User::create([
             'first_name' => 'Демьянова',
@@ -84,6 +94,7 @@ class DatabaseSeeder extends Seeder
             'role_id' => $roleUserId
         ]);
 
+        $this->command->info("Creating advertisement types...");
         // Типы объявлений
         foreach ($this->notCommercialTypes as $type)
             AdvertisementType::create([
@@ -96,6 +107,7 @@ class DatabaseSeeder extends Seeder
                 "is_commercial" => true
             ]);
 
+        $this->command->info("Creating filters...");
         // Фильтры
         $etageFilterId = Filter::create([
             "name" => "Этаж",
@@ -175,6 +187,7 @@ class DatabaseSeeder extends Seeder
             "type" => "select"
         ])->id;
 
+        $this->command->info("Creating filter values...");
         // Значения фильтра "Тип дома"
         $houseTypes = [
             "Кирпичный",
@@ -265,6 +278,7 @@ class DatabaseSeeder extends Seeder
                 "value" => $type
             ]);
 
+        $this->command->info("Creating associations filters from values...");
         // Ассоциация фильтров с типами объявлений
         $filters1 = [
             $etageFilterId,

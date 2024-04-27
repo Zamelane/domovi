@@ -51,7 +51,6 @@ Route::group([
 
 Route::group([
     "controller" => AdvertisementController::class,
-    "middleware" => "auth",
     "prefix" => "advertisement"
 ], function ($ads) {
     $ads->middleware('check.role:^guest')->group(function ($ad) {
@@ -59,13 +58,15 @@ Route::group([
         $ad->get('search','search' );
         $ad->get('{id}',  'show'   )->where('id', '[0-9]+');
     });
-    $ads->middleware('check.role:^owner')->group(function ($ad) {
-       $ad->middleware('check.role:=owner')->post('create', 'create');
-       $ad->prefix('{id}')
-           ->group(function ($privilegedAd) {
-               $privilegedAd->delete('delete', 'delete');
-               $privilegedAd->patch('edit', 'edit');
-           })
-           ->where('id', '[0-9]+');
+    $ads->middleware('auth')
+        ->middleware('check.role:^owner')
+        ->group(function ($ad) {
+            $ad->middleware('check.role:=owner')->post('create', 'create');
+            $ad->prefix('{id}')
+                ->group(function ($privilegedAd) {
+                    $privilegedAd->delete('delete', 'delete');
+                    $privilegedAd->patch('edit', 'edit');
+                })
+                ->where('id', '[0-9]+');
     });
 });

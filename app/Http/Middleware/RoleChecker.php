@@ -25,10 +25,12 @@ class RoleChecker
         $allowedLevels = explode('|', $allowedLevel);
         // Определяем роль пользователя
         $user = auth()->user();
-        $userRole = $user->role->code;
+        $userRole = $user->role->code ?? 'guest';
         $block = false;
 
-        User::checkAvailable($user);
+        // Если пользователь не гость, то проверяем, есть ли унего бан или модерация
+        if ($user)
+            User::checkAvailable($user);
 
         if (count($allowedLevels) === 1) {
             $searchUp = $allowedLevel[0];
