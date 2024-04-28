@@ -26,6 +26,31 @@ class Advertisement extends Model
         "cost"
     ];
 
+    /*
+     * Создаёт и возвращает объявление по полям из запроса.
+     */
+    public static function createByRequest()
+    {
+        $currUser = auth()->user();
+        $addressId = Address::addresByRequest()->id;
+
+        return Advertisement::create([
+            ...request()->all(),
+            'advertisement_type_id' => request()->advertisement_type_id,
+            'address_id' => $addressId,
+            'user_id' => $currUser->id
+        ]);
+    }
+
+    public static function checkEmployeeRelationsByAdvertisement(int $employeeId, int $advertisementId)
+    {
+        $deal = Deal::where("advertisement_id", $advertisementId)->first();
+
+        if (!$deal || $deal->employee_id != $employeeId)
+            return false;
+        return true;
+    }
+
     // Связи
     public function user()
     {

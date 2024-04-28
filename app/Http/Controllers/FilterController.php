@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\ApiException;
 use App\Models\AdFilterValue;
 use App\Models\AdvertisementTypeFilter;
 use App\Models\Filter;
+use Illuminate\Database\Eloquent\Casts\Json;
 use Illuminate\Http\Request;
 
 class FilterController extends Controller
@@ -14,7 +16,7 @@ class FilterController extends Controller
      * @param $advertisement_type_id
      * @return array|null
      */
-    public static function getFiltersRules($advertisement_type_id)
+    public static function getFiltersRules($advertisement_type_id, $filterPrefix = "options")
     {
         // Получаем все связи фильтраи и типа объявления
         $relationsFilters = AdvertisementTypeFilter::where("advertisement_type_id", $advertisement_type_id)->get();
@@ -23,20 +25,20 @@ class FilterController extends Controller
             $filter = $relation->filter;
             switch ($filter->type) {
                 case "write_number":
-                    $filtersRules["filters.{$filter->code}"] = "required|decimal:0,2|min:0|max:3000.00";
+                    $filtersRules["$filterPrefix.{$filter->code}"] = "required|decimal:0,2|min:0|max:3000.00";
                     break;
                 case "summer_number":
-                    $filtersRules["filters.{$filter->code}"] = "required|integer|min:0|max:10";
+                    $filtersRules["$filterPrefix.{$filter->code}"] = "required|integer|min:0|max:10";
                     break;
                 case "write_text":
-                    $filtersRules["filters.{$filter->code}"] = "required|string|min:2|max:32";
+                    $filtersRules["$filterPrefix.{$filter->code}"] = "required|string|min:2|max:32";
                     break;
                 case "select":
                     $in = "";
                     foreach ($filter->filter_values as $v)
                         $in .= ($in != "" ? "," : "") . $v->value;
                     if ($in != "")
-                        $filtersRules["filters.{$filter->code}"] = "required|in:$in";
+                        $filtersRules["$filterPrefix.{$filter->code}"] = "required|in:$in";
                     break;
             }
         }
@@ -47,12 +49,11 @@ class FilterController extends Controller
      * Сохраняет фильтры для объявления.
      * Все непереданные значения фильтров автоматически удаляются из БД.
      * @param int $advertisement_id
-     * @param array $filters
-     * @param $request
      * @return void
      */
-    public static function saveFiltersToAd(int $advertisement_id, array $filters, $request)
+    public static function saveOptionsToAd(int $advertisement_id)
     {
+        $filters = request()->options;
         $idsToSave = [];
         foreach ($filters as $key => $value) {
             // Убираем из ключа вложенность массивов (например: "filters.field" должно стать "field")
@@ -72,13 +73,13 @@ class FilterController extends Controller
             ])->first();
             // Если значение фильтр есть - то обновляем
             if ($relation) {
-                $relation->value = $request[$key];
-                $relation->save();
+                AdFilterValue::where([...$relation->toArray()])
+                    ->update(["value" => $value]);
             } else { // Если значения фильтра нет, то добавляем
                 AdFilterValue::create([
                     "advertisement_id" => $advertisement_id,
                     "filter_id" => $filter->id,
-                    "value" => $request[$key]
+                    "value" => $value
                 ]);
             }
         }

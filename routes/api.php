@@ -64,8 +64,8 @@ Route::group([
             $ad->middleware('check.role:=owner')->post('create', 'create');
             $ad->prefix('{id}')
                 ->group(function ($privilegedAd) {
-                    $privilegedAd->delete('delete', 'delete');
-                    $privilegedAd->patch('edit', 'edit');
+                    $privilegedAd->delete('', 'delete');
+                    $privilegedAd->post('', 'edit');
                 })
                 ->where('id', '[0-9]+');
     });

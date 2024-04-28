@@ -2,68 +2,85 @@
 
 namespace App\Http\Controllers;
 
-use App\Exceptions\ApiException;
 use App\Exceptions\ForbiddenYouException;
 use App\Exceptions\NotFoundException;
 use App\Http\Requests\Advertisement\AdvertisementCreateRequest;
+use App\Http\Requests\Advertisement\AdvertisementEditRequest;
 use App\Http\Resources\Advertisements\AdvertisementResource;
-use App\Models\Address;
+use App\Http\Utils\RulesChecker;
 use App\Models\Advertisement;
-use App\Models\AdvertisementTypeFilter;
-use App\Models\City;
 use App\Models\Photo;
-use App\Models\Street;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Validator;
 
 class AdvertisementController extends Controller
 {
     public function create(AdvertisementCreateRequest $request) {
         // Проверяем фильтры
-        $filtersRules = FilterController::getFiltersRules($request->advertisement_type_id);
-        if ($filtersRules) {
-            $validator = Validator::make($request->all(), $filtersRules);
-            if ($validator->fails())
-                throw new ApiException(422, 'Request validation error', $validator->errors());
-        }
-        // Продолжаем создание объявления
-        $currUser = auth()->user();
-        //$advertisement_type_id = AdvertisementType::find($request->advertisement_type_id);
-        $cityId = City::firstOrCreate(['name' => $request->city])->id;
-        $streetId = Street::firstOrCreate(['name' => $request->street, 'city_id' => $cityId])->id;
-        $addressId = Address::firstOrCreate([
-            'street_id' => $streetId,
-            ...request(['house', 'structure', 'building', 'apartament'])
-        ])->id;
+        $options = FilterController::getFiltersRules($request->advertisement_type_id);
+        RulesChecker::check($options);
 
-        $advertisement = Advertisement::create([
-            ...$request->all(),
-            'advertisement_type_id' => $request->advertisement_type_id,
-            'address_id' => $addressId,
-            'user_id' => $currUser->id
-        ]);
+        // Создаём объявление
+        $advertisement = Advertisement::createByRequest();
 
-        $files = $request->file('photos') ?? [];
-
-        foreach ($files as $file) {
-            $fileExt = $file->getClientOriginalExtension();
-            $fileHash = md5_file($file->getRealPath());
-
-            $imageName = "$fileHash.$fileExt";
-            $path = "uploads/$fileExt/";
-
-            if (!Storage::exists($path.$imageName))
-                $file->move  ($path,$imageName );
-
-            Photo::firstOrCreate(["name" => $imageName, "advertisement_id" => $advertisement->id]);
-        }
+        // Сохраняем фотографии из объявления
+        Photo::saveFromRequestByAdvertisementId($advertisement->id);
 
         // Сохраняем значения фильтров
-        FilterController::saveFiltersToAd($advertisement->id, $filtersRules, $request);
+        FilterController::saveOptionsToAd($advertisement->id);
 
-        return response(AdvertisementResource::make($advertisement), 201);
+        return response([
+            "advertisement_id" => $advertisement->id
+        ], 201);
     }
+
+    public function edit(AdvertisementEditRequest $request, int $id)
+    {
+        $advertisement = Advertisement::find($id);
+
+        if (!$advertisement)
+            throw new NotFoundException();
+
+        $user = auth()->user();
+
+        // Если пользователь не относится к работнику и не является автором объявления, то выкидываем в ошибку
+        if (array_search($user->role->code, ["admin", "owner"]) === false
+            && $user->id != $advertisement->user->id)
+            throw new ForbiddenYouException();
+
+        // Если пользователь - менеджер, то ограничиваем его в правах
+        if ($user->role->code === "owner")
+            if ($advertisement->is_moderated !== null
+                || !Advertisement::checkEmployeeRelationsByAdvertisement($user->id, $advertisement->id))
+                throw new ForbiddenYouException();
+
+        // Проверяем фильтры. Если переданы, то должны быть включены и все обязательные фильтры
+        if (isset($request->options)
+            || (isset($request->advertisement_type_id)
+                && $request->advertisement_type_id !== $advertisement->advertisement_type->id)) {
+            // Получаем обязательные фильтры
+            $options = FilterController::getFiltersRules($advertisement->advertisement_type->id);
+            // Проверяем наличие обязательных фильтров в запросе
+            RulesChecker::check($options);
+            // Сохраняем значения фильтров
+            FilterController::saveOptionsToAd($advertisement->id);
+        }
+
+        // Проверяем картинки. Если переданы, то загружаем
+        if (isset($request->photos))
+            Photo::saveFromRequestByAdvertisementId($advertisement->id);
+        // Если переданы картинки для удаления, то удаляем
+        if (isset($request->photosToDelete))
+            Photo::deleteNotIn($request["photosToDelete"], $advertisement->id);
+
+        // Обновляем объявление
+        $advertisement->update([
+            ...request()->all(),
+            "user_id" => $advertisement->user_id
+        ]);
+
+        return response(null, 202);
+    }
+
     public function show(Request $request, int $id)
     {
         $advertisement = Advertisement::find($id);

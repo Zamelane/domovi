@@ -15,6 +15,27 @@ class Street extends Model
         "name"
     ];
 
+    /*
+     * Возвращает улицу по полям из входящего запроса.
+     */
+    public static function streetByRequest()
+    {
+        $city = City::cityByRequest();
+
+        if (!$city)
+            return null;
+
+        $credentials = request(["street_id", "street"]);
+
+        if (array_key_exists("street_id", $credentials))
+            return Street::find($credentials["street_id"]);
+
+        return Street::firstOrCreate([
+            "name" => $credentials["street"],
+            "city_id" => $city->id
+        ]);
+    }
+
     // Связи
     public function city()
     {
