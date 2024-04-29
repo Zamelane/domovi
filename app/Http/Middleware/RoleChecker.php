@@ -2,9 +2,7 @@
 
 namespace App\Http\Middleware;
 
-use App\Exceptions\ApiException;
 use App\Exceptions\ForbiddenYouException;
-use App\Exceptions\YouBannedException;
 use App\Models\User;
 use Closure;
 use Illuminate\Http\Request;

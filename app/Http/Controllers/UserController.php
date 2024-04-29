@@ -11,8 +11,7 @@ use App\Http\Requests\User\UserRequest;
 use App\Http\Resources\Users\UserResource;
 use App\Models\Role;
 use App\Models\User;
-use \Illuminate\Support\Facades\Validator;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {

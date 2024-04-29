@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\AdvertisementController;
+use \App\Http\Controllers\FavouriteController;
 
 /*
 |--------------------------------------------------------------------------
@@ -54,7 +55,6 @@ Route::group([
     "prefix" => "advertisement"
 ], function ($ads) {
     $ads->middleware('check.role:^guest')->group(function ($ad) {
-        $ad->get('',      'showAll');
         $ad->get('search','search' );
         $ad->get('{id}',  'show'   )->where('id', '[0-9]+');
     });
@@ -70,3 +70,21 @@ Route::group([
                 ->where('id', '[0-9]+');
     });
 });
+
+Route::group([
+    "controller" => FavouriteController::class,
+    "prefix" => "favourites",
+    "middleware" => "auth"
+], function ($favourites) {
+    $favourites->middleware('check.role:user|owner')
+        ->group(function ($ad) {
+            $ad->middleware('check.role:=owner')->post('create', 'create');
+            $ad->prefix('{id}')
+                ->group(function ($privilegedAd) {
+                    $privilegedAd->delete('', 'delete');
+                    $privilegedAd->put   ('', 'add'   );
+                })
+                ->where('id', '[0-9]+');
+        });
+});
+

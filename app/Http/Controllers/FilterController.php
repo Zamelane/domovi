@@ -2,12 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Exceptions\ApiException;
 use App\Models\AdFilterValue;
 use App\Models\AdvertisementTypeFilter;
 use App\Models\Filter;
-use Illuminate\Database\Eloquent\Casts\Json;
-use Illuminate\Http\Request;
 
 class FilterController extends Controller
 {

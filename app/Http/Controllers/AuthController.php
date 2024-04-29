@@ -2,14 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Exceptions\ApiException;
 use App\Exceptions\InvalidAuthData;
 use App\Http\Requests\Auth\ConfirmLoginUserRequest;
 use App\Http\Requests\Auth\LoginEmployeeRequest;
 use App\Http\Requests\Auth\LoginUserRequest;
 use App\Http\Requests\Auth\SignupUserRequest;
 use App\Http\Requests\Auth\SMSSendRequest;
-use App\Http\Resources\Users\UserResource;
 use App\Models\Role;
 use App\Models\Sms;
 use App\Models\User;

@@ -6,9 +6,12 @@ use App\Exceptions\ForbiddenYouException;
 use App\Exceptions\NotFoundException;
 use App\Http\Requests\Advertisement\AdvertisementCreateRequest;
 use App\Http\Requests\Advertisement\AdvertisementEditRequest;
+use App\Http\Requests\Advertisement\SearchAdvertisementRequest;
+use App\Http\Resources\Advertisements\AdvertisementMinResource;
 use App\Http\Resources\Advertisements\AdvertisementResource;
 use App\Http\Utils\RulesChecker;
 use App\Models\Advertisement;
+use App\Models\Filter;
 use App\Models\Photo;
 use Illuminate\Http\Request;
 
@@ -94,5 +97,61 @@ class AdvertisementController extends Controller
                 throw new ForbiddenYouException();
 
         return response(AdvertisementResource::make($advertisement), 200);
+    }
+
+    public function search(SearchAdvertisementRequest $request)
+    {
+        $query = Advertisement::select('advertisements.*');
+
+        if ($request->min_cost)
+            $query->where("cost", ">=", $request->min_cost);
+        if ($request->max_cost)
+            $query->where("cost", "<=", $request->max_cost);
+        if ($request->advertisement_type_id)
+            $query->where("advertisement_type_id", "=", $request->advertisement_type_id);
+        if ($request->transaction_type)
+            $query->where("transaction_type", "=", $request->transaction_type);
+        if ($request->area)
+            $query->where("area", ">=", $request->area);
+        if ($request->count_rooms)
+            $query->where("count_rooms", "=", $request->count_rooms);
+        if ($request->filters) {
+            $id = 0;
+            foreach ($request->filters as $filter => $value)
+            {
+                if ($value != null)
+                    $query->join("ad_filter_values as {$id}afv", function ($join) use ($value, $filter, $id) {
+                        $join->on("{$id}afv.advertisement_id", "=", "advertisements.id")
+                            ->where("{$id}afv.value", "=", $value)
+                            ->join("filters as {$id}f", function ($join) use ($filter, $id) {
+                                $filterKeys = explode("_", $filter);
+                                $filter = $filterKeys[count($filterKeys) - 1];
+                                $where = $filterKeys[0];
+                                switch ($where) {
+                                    case "min": $where = ">="; break;
+                                    case "max": $where = "<="; break;
+                                    default: $where = "="; break;
+                                }
+                                $join->on("{$id}f.id", "=", "{$id}afv.filter_id")
+                                    ->where("{$id}f.code", $where, $filter);
+                            });
+                    });
+                $id++;
+            }
+        }
+        if ($request->city || $request->street) {
+            $query->join("addresses", "advertisements.address_id", "=", "addresses.id")
+                ->join("streets", "addresses.street_id", "=", "streets.id")
+                ->join("cities", "cities.id", "=", "streets.city_id");
+            if ($request->city)
+                $query->where("cities.name", $request->city);
+            if ($request->street)
+                $query->where("streets.name", $request->street);
+        }
+
+        return response([
+            "advertisements" => AdvertisementMinResource::collection($query->simplePaginate(15)->all()),
+            "allPages" => ceil($query->count() / 15)
+        ]);
     }
 }

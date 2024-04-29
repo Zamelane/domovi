@@ -2,11 +2,8 @@
 
 namespace App\Models;
 
-use App\Exceptions\ApiException;
-use Illuminate\Database\Eloquent\Casts\Json;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Request;
 
 class AdvertisementTypeFilter extends Model
 {
