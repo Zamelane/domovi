@@ -9,12 +9,13 @@ use App\Models\Filter;
 use App\Models\FilterValue;
 use App\Models\Role;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Casts\Json;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
 
 class DatabaseSeeder extends Seeder
 {
-    protected $notCommercialTypes = [
+    /*protected $notCommercialTypes = [
         "Квартира во вторичке",
         "Квартира в новостройке",
         "Комната",
@@ -27,12 +28,17 @@ class DatabaseSeeder extends Seeder
     protected $commercialTypes = [
         "Офис",
         "Коммерческая земля"
+    ];*/
+    protected $classes = [
+      "AdvertisementTypeFilter" => AdvertisementTypeFilter::class,
+      "AdvertisementType" => AdvertisementType::class,
+      "Filter" => Filter::class
     ];
     protected $adminLogin = "chernov-nm";
     protected $adminPassword = "chernov!";
     public function run(): void
     {
-        $this->adminPassword = Str::random(10);
+        /*$this->adminPassword = Str::random(10);
         $this->command->info('Creating roles...');
         // Роли
         $roleAdminId   = Role::firstOrCreate(['code' => 'admin'  ])->id;
@@ -93,8 +99,8 @@ class DatabaseSeeder extends Seeder
             'is_banned' => false,
             'role_id' => $roleUserId
         ]);
-
-        $this->command->info("Creating advertisement types...");
+        */
+        /*$this->command->info("Creating advertisement types...");
         // Типы объявлений
         foreach ($this->notCommercialTypes as $type)
             AdvertisementType::create([
@@ -305,5 +311,45 @@ class DatabaseSeeder extends Seeder
                     "filter_id" => $filter_id,
                     "advertisement_type_id" => $advertisement_type_id
                 ]);
+        */
+        $seederDataPath = "database/seeders/DatabaseSeederData.json";
+        if (!file_exists($seederDataPath)) {
+            $this->command->error("Database seeder data not found...");
+            return;
+        }
+
+        $databaseSeederData = json_decode(file_get_contents($seederDataPath));
+
+        foreach ($databaseSeederData as $rootTable => $rootData) {
+            $this->recursiveRead($rootTable, $rootData);
+        }
+    }
+    public function recursiveRead(string $rootTable, array|object $rootData): int | null
+    {
+        if (!is_object($rootData)) {
+            foreach ($rootData as $childrenData) {
+                $this->recursiveRead($rootTable, $childrenData);
+            }
+            return null;
+        }
+
+        $class = $this->classes[$rootTable];
+        $fields_to_save = [];
+        foreach ($rootData as $field => $value) {
+            $slugs = preg_split('/(?<=[a-z])(?=[A-Z])/u', $field);
+            if (count($slugs) > 1 || $this->isLower($field)) {
+                $slugs = array_map("strtolower", $slugs);
+                $slugsField_name = join("_", [...$slugs, "id"]);
+                $fields_to_save[$slugsField_name] = $this->recursiveRead($field, $value);
+                continue;
+            }
+            $fields_to_save[$field] = $value;
+        }
+        return $class::firstOrCreate($fields_to_save)->id;
+    }
+    public function isLower($str)
+    {
+        $chr = mb_substr ($str, 0, 1, "UTF-8");
+        return mb_strtolower($chr, "UTF-8") != $chr;
     }
 }

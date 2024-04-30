@@ -1,0 +1,26 @@
+{
+    "AdvertisementTypeFilter": [
+        {
+            "Filter": {
+                "name": "Этаж",
+                "code": "etage",
+                "type": "write_number"
+            },
+            "AdvertisementType": {
+                "name": "Квартира во вторичке",
+                "is_commercial": false
+            }
+        },
+        {
+            "Filter": {
+                "name": "Этаж",
+                "code": "etage",
+                "type": "write_number"
+            },
+            "AdvertisementType": {
+                "name": "Квартира в новостройке",
+                "is_commercial": false
+            }
+        }
+    ]
+}

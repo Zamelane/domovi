@@ -20,9 +20,7 @@ class UserController extends Controller
      */
     public function me()
     {
-        return response([
-            "user" => UserResource::make(auth()->user())
-        ]);
+        return response(UserResource::make(auth()->user()));
     }
 
     public function show(int $id)
