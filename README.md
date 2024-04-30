@@ -10,9 +10,9 @@
 Откройте консоль OSPanel и введите следующие команды (по очереди):
 ```bat
 cd domains
-git clone https://github.com/Kopchan/hotel-zews-server zews-hotel.ru
-cd zews-hotel.ru
-composer i
+git clone https://github.com/zamelane/domovi domovi.ru
+cd domovi.ru
+composer update & composer i
 copy .env.example .env
 php artisan key:generate
 php artisan migrate --seed
@@ -29,5 +29,33 @@ RewriteRule (.*)? /public/$1
 
 ```bat
 git pull
+composer update & composer i
 php artisan migrate:fresh --seed
+```
+
+## Типизация при разрабокте
+
+1. Установите помошника:
+
+```bat
+composer require --dev barryvdh/laravel-ide-helper
+```
+
+2. генерируйте подсказки для моделей:
+
+```bat
+php artisan ide-helper:models
+php artisan ide-helper:models --reset
+```
+
+3. Сгенерируйте подсказки кода для методов фасадов:
+
+```bat
+php artisan ide-helper:generate
+```
+
+4. Сгенерируйте подсказки по коду для классов-контейнеров
+
+```bat
+php artisan ide-helper:meta
 ```
