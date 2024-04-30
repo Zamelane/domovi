@@ -11,7 +11,7 @@ class FavouriteController extends Controller
 {
     public function add(Request $request, int $id) {
         if (!$advertisement = Advertisement::find($id))
-            throw new NotFoundException();
+            throw new NotFoundException("Advertisement");
 
         Favourite::firstOrCreate([
             "user_id" => auth()->user()->id,
@@ -19,5 +19,13 @@ class FavouriteController extends Controller
         ]);
 
         return response(null, 201);
+    }
+    public function delete(Request $request, int $id) {
+        Favourite::where([
+            "user_id" => auth()->user()->id,
+            "advertisement_id" => $id
+        ])->delete();
+
+        return response(null, 204);
     }
 }

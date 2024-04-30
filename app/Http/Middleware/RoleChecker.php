@@ -2,9 +2,11 @@
 
 namespace App\Http\Middleware;
 
+use App\Exceptions\ApiException;
 use App\Exceptions\ForbiddenYouException;
 use App\Models\User;
 use Closure;
+use Illuminate\Database\Eloquent\Casts\Json;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -48,7 +50,7 @@ class RoleChecker
                 $block = true;
         }
 
-        if ($block || array_search($userRole, $allowedLevels) === -1)
+        if ($block || (array_search($userRole, $allowedLevels) === false && count($allowedLevels) > 1))
             throw new ForbiddenYouException();
 
         return $next($request);

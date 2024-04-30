@@ -1,26 +1,325 @@
 {
-    "AdvertisementTypeFilter": [
+    "User": [
+        {
+            "first_name": "Чернов",
+            "last_name": "Николай",
+            "patronymic": "Михайлович",
+            "phone": 89994355644,
+            "login": "chernov-nm",
+            "password": "chernov!",
+            "is_passed_moderation": true,
+            "is_banned": false,
+            "Role": {
+                "code": "admin"
+            }
+        },
+        {
+            "first_name": "Демьянова",
+            "last_name": "Кристина",
+            "patronymic": "Максимовна",
+            "phone": 89964335121,
+            "login": "demienova-km",
+            "password": "demienova!",
+            "is_passed_moderation": true,
+            "is_banned": false,
+            "Role": {
+                "code": "manager"
+            }
+        },
+        {
+            "first_name": "Серебрякова",
+            "last_name": "Мария",
+            "patronymic": "Андреевна",
+            "phone": 87359675432,
+            "login": "serebrakova-ma",
+            "password": "serebrakova!",
+            "is_passed_moderation": true,
+            "is_banned": false,
+            "Role": {
+                "code": "owner"
+            }
+        },
+        {
+            "first_name": "Фролова",
+            "last_name": "София",
+            "patronymic": "Демидовна",
+            "phone": 89432143567,
+            "login": "frolova-cd",
+            "password": "frolova!",
+            "is_passed_moderation": true,
+            "is_banned": false,
+            "Role": {
+                "code": "user"
+            }
+        }
+    ],
+    "Filter": [
+        {
+            "name": "Этаж",
+            "code": "etage",
+            "type": "write_number"
+        },
+        {
+            "name": "Этажей в доме",
+            "code": "allEtages",
+            "type": "write_number"
+        },
+        {
+            "name": "Год постройки дома",
+            "code": "houseBuildingYear",
+            "type": "write_number"
+        },
+        {
+            "name": "Высота потолков (метры)",
+            "code": "heigthPotol",
+            "type": "write_number"
+        },
+        {
+            "name": "Балконы/лоджии",
+            "code": "countBalcons",
+            "type": "summer_number"
+        },
+        {
+            "name": "Тип дома",
+            "code": "typeHouse",
+            "type": "select"
+        },
+        {
+            "name": "Тип недвижимости",
+            "code": "propertyType",
+            "type": "select"
+        },
+        {
+            "name": "Вид из окна",
+            "code": "windowView",
+            "type": "select"
+        },
+        {
+            "name": "Ремонт",
+            "code": "remontType",
+            "type": "select"
+        },
+        {
+            "name": "Есть лифт(ы)",
+            "code": "availableLift",
+            "type": "select"
+        },
+        {
+            "name": "Есть пандус",
+            "code": "pandys",
+            "type": "select"
+        },
+        {
+            "name": "Есть мусоропровод",
+            "code": "mysoroprovod",
+            "type": "select"
+        },
+        {
+            "name": "Тип парковки",
+            "code": "parkovka",
+            "type": "select"
+        }
+    ],
+    "FilterValue": [
         {
             "Filter": {
-                "name": "Этаж",
-                "code": "etage",
-                "type": "write_number"
+                "code": "typeHouse"
             },
+            "values": [
+                "Кирпичный",
+                "Монолитный",
+                "Панельный",
+                "Блочный",
+                "Деревянный",
+                "Сталинский",
+                "Монолитно-кирпичный"
+            ]
+        },
+        {
+            "Filter": {
+                "code": "propertyType"
+            },
+            "values": [
+                "Квартира",
+                "Апартаменты"
+            ]
+        },
+        {
+            "Filter": {
+                "code": "windowView"
+            },
+            "values": [
+                "На улицу",
+                "Во двор"
+            ]
+        },
+        {
+            "Filter": {
+                "code": "remontType"
+            },
+            "values": [
+                "Без ремонта",
+                "Косметический",
+                "Евро",
+                "Дизайнерский"
+            ]
+        },
+        {
+            "Filter": {
+                "code": "availableLift"
+            },
+            "values": [
+                "Да",
+                "Нет"
+            ]
+        },
+        {
+            "Filter": {
+                "code": "pandys"
+            },
+            "values": [
+                "Да",
+                "Нет"
+            ]
+        },
+        {
+            "Filter": {
+                "code": "mysoroprovod"
+            },
+            "values": [
+                "Да",
+                "Нет"
+            ]
+        },
+        {
+            "Filter": {
+                "code": "parkovka"
+            },
+            "values": [
+                "Нету",
+                "Наземная",
+                "Многоуровневая",
+                "Подземная",
+                "На крыше"
+            ]
+        }
+    ],
+    "AdvertisementTypeFilter": [
+        {
+            "Filters": [
+                {
+                    "code": "etage"
+                },
+                {
+                    "code": "allEtages"
+                },
+                {
+                    "code": "houseBuildingYear"
+                },
+                {
+                    "code": "heigthPotol"
+                },
+                {
+                    "code": "propertyType"
+                },
+                {
+                    "code": "typeHouse"
+                },
+                {
+                    "code": "countBalcons"
+                },
+                {
+                    "code": "windowView"
+                },
+                {
+                    "code": "remontType"
+                },
+                {
+                    "code": "availableLift"
+                },
+                {
+                    "code": "pandys"
+                },
+                {
+                    "code": "mysoroprovod"
+                },
+                {
+                    "code": "parkovka"
+                }
+            ],
             "AdvertisementType": {
                 "name": "Квартира во вторичке",
                 "is_commercial": false
             }
         },
         {
-            "Filter": {
-                "name": "Этаж",
-                "code": "etage",
-                "type": "write_number"
-            },
+            "Filters": [
+                {
+                    "code": "etage"
+                },
+                {
+                    "code": "allEtages"
+                },
+                {
+                    "code": "houseBuildingYear"
+                },
+                {
+                    "code": "heigthPotol"
+                },
+                {
+                    "code": "propertyType"
+                },
+                {
+                    "code": "typeHouse"
+                },
+                {
+                    "code": "countBalcons"
+                },
+                {
+                    "code": "windowView"
+                },
+                {
+                    "code": "remontType"
+                },
+                {
+                    "code": "availableLift"
+                },
+                {
+                    "code": "pandys"
+                },
+                {
+                    "code": "mysoroprovod"
+                },
+                {
+                    "code": "parkovka"
+                }
+            ],
             "AdvertisementType": {
                 "name": "Квартира в новостройке",
                 "is_commercial": false
             }
+        }
+    ],
+    "AdvertisementType": [
+        {
+            "names": [
+                "Квартира во вторичке",
+                "Квартира в новостройке",
+                "Комната",
+                "Дом, дача",
+                "Часть дома",
+                "Таунхаус",
+                "Участок",
+                "Гараж"
+            ],
+            "is_commercial": false
+        },
+        {
+            "names": [
+                "Офис",
+                "Коммерческая земля"
+            ],
+            "is_commercial": true
         }
     ]
 }

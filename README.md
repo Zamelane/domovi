@@ -35,7 +35,7 @@ php artisan migrate:fresh --seed
 
 ## Подсказки классов при разработке
 
-1. Установите помощника:
+1. Установите помощника (уже установлен, поэтому можно пропустить):
 
 ```bat
 composer require --dev barryvdh/laravel-ide-helper
