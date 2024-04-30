@@ -33,15 +33,15 @@ composer update & composer i
 php artisan migrate:fresh --seed
 ```
 
-## Типизация при разрабокте
+## Подсказки классов при разработке
 
-1. Установите помошника:
+1. Установите помощника:
 
 ```bat
 composer require --dev barryvdh/laravel-ide-helper
 ```
 
-2. генерируйте подсказки для моделей:
+2. Сгенерируйте подсказки для моделей:
 
 ```bat
 php artisan ide-helper:models
@@ -54,7 +54,7 @@ php artisan ide-helper:models --reset
 php artisan ide-helper:generate
 ```
 
-4. Сгенерируйте подсказки по коду для классов-контейнеров
+4. Сгенерируйте подсказки по коду для классов-контейнеров:
 
 ```bat
 php artisan ide-helper:meta
