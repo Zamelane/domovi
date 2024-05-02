@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Exceptions\ApiException;
-use App\Exceptions\ForbiddenYouException;
+use App\Exceptions\ForbiddenForYouException;
 use App\Exceptions\NotFoundException;
 use App\Http\Requests\User\UserCreateRequest;
 use App\Http\Requests\User\UserEditRequest;
@@ -32,7 +32,7 @@ class UserController extends Controller
 
         if (auth()->user()->role->code === 'user') {
             if ($user->role->code === 'admin')
-                throw new ForbiddenYouException();
+                throw new ForbiddenForYouException();
         }
 
         return response(UserResource::make($user));
@@ -64,12 +64,12 @@ class UserController extends Controller
         $currUser = $id ? auth()->user() : $editUser;
         if (array_search($currUser->role->code, ["user", "owner"]) > -1) {
             if ($currUser->id !== $id)
-                throw new ForbiddenYouException();
+                throw new ForbiddenForYouException();
             $editCredentials = request(["first_name", "last_name", "middle_name"]);
         } else {
             if ($currUser->role->code !== "admin")
                 if ($editUser->role->code === "admin")
-                    throw new ForbiddenYouException();
+                    throw new ForbiddenForYouException();
             if ($request->role) {
                 if ($request->role === "admin" && $currUser->role !== "admin")
                     $request->role = "manager";

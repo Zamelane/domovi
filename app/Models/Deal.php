@@ -20,6 +20,33 @@ class Deal extends Model
         "percent",
         "create_date",
         "start_date",
-        "valid_until_date"
+        "valid_until_date",
+        "address_id"
     ];
+
+    // Связи
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function employee()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function deal_status()
+    {
+        return $this->belongsTo(DealStatus::class);
+    }
+
+    public function advertisement()
+    {
+        return $this->belongsTo(Advertisement::class);
+    }
+
+    public function address()
+    {
+        return $this->belongsTo(Address::class);
+    }
 }

@@ -14,13 +14,14 @@ return new class extends Migration
         Schema::create('deals', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnUpdate();
-            $table->foreignId('employee_id')->constrained('users')->cascadeOnUpdate();
+            $table->foreignId('employee_id')->nullable()->constrained('users')->cascadeOnUpdate();
             $table->foreignId('deal_status_id')->constrained()->cascadeOnUpdate();
             $table->foreignId('advertisement_id')->constrained()->cascadeOnUpdate();
             $table->tinyInteger('percent')->default(5);
             $table->date('create_date');
             $table->date('start_date')->nullable();
             $table->date('valid_until_date')->nullable();
+            $table->foreignId('address_id')->constrained()->cascadeOnUpdate();
             // $table->timestamps();
         });
     }

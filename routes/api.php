@@ -3,9 +3,10 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\AdvertisementController;
-use \App\Http\Controllers\FavouriteController;
+use App\Http\Controllers\FavouriteController;
+use App\Http\Controllers\DealController;
+use App\Http\Controllers\AddressController;
 
 /*
 |--------------------------------------------------------------------------
@@ -77,14 +78,35 @@ Route::group([
     "middleware" => "auth"
 ], function ($favourites) {
     $favourites->middleware('check.role:user|owner')
-        ->group(function ($ad) {
-            $ad->middleware('check.role:=owner')->post('create', 'create');
-            $ad->prefix('{id}')
-                ->group(function ($privilegedAd) {
-                    $privilegedAd->delete('', 'delete');
-                    $privilegedAd->put   ('', 'add'   );
-                })
-                ->where('id', '[0-9]+');
-        });
+        ->prefix('{id}')
+        ->group(function ($privilegedFavourite) {
+            $privilegedFavourite->delete('', 'delete');
+            $privilegedFavourite->put   ('', 'add'   );
+        })
+        ->where('id', '[0-9]+');
 });
 
+Route::group([
+    "controller" => DealController::class,
+    "prefix" => "deals",
+    "middleware" => "auth"
+], function ($deals) {
+    $deals->middleware('check.role:user|owner')
+        ->post('create', 'create');
+    $deals->prefix('{dealId}')
+        ->group(function ($deal) {
+            $deal->get  ('',      'show' );
+            $deal->get  ('close', 'close');
+            $deal->patch('',     'edit' );
+        })
+        ->where('id', '[0-9]+');
+});
+
+Route::group([
+    "controller" => AddressController::class,
+    "prefix" => "address"
+], function ($address) {
+    $address->get('',         'get'      );
+    $address->get('cities',   'getCity'  );
+    $address->get('streets',  'getStreet');
+});

@@ -5,6 +5,7 @@ namespace Database\Seeders;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use App\Models\AdvertisementType;
 use App\Models\AdvertisementTypeFilter;
+use App\Models\DealStatus;
 use App\Models\Filter;
 use App\Models\FilterValue;
 use App\Models\Role;
@@ -21,7 +22,8 @@ class DatabaseSeeder extends Seeder
         "Filter" => Filter::class,
         "FilterValue" => FilterValue::class,
         "User" => User::class,
-        "Role" => Role::class
+        "Role" => Role::class,
+        "DealStatuses" => DealStatus::class
     ];
     public function run(): void
     {

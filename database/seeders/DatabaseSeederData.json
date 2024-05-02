@@ -321,5 +321,11 @@
             ],
             "is_commercial": true
         }
+    ],
+    "DealStatuses": [
+        {
+            "code": "awaiting_agent",
+            "description": "Ожидает назначения агента"
+        }
     ]
 }

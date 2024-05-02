@@ -51,6 +51,16 @@ class Advertisement extends Model
         return true;
     }
 
+    public function checkAvailable()
+    {
+        if ($this->advertisement_id !== null
+            || !$this->is_moderated
+            || $this->is_deleted
+            || $this->is_achive)
+            return false;
+        return true;
+    }
+
     // Связи
     public function user()
     {

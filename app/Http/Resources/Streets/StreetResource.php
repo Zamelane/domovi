@@ -10,10 +10,12 @@ class StreetResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            "street_id" => $this->id,
-            "street_name" => $this->name,
-            "city_id" => $this->city->id,
-            "city_name" => $this->city->name
+            "id" => $this->id,
+            "name" => $this->name,
+            "city" => [
+                "id" => $this->city->id,
+                "name" => $this->city->name
+            ]
         ];
     }
 }

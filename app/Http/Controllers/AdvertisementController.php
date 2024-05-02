@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Exceptions\ForbiddenYouException;
+use App\Exceptions\ForbiddenForYouException;
 use App\Exceptions\NotFoundException;
 use App\Http\Requests\Advertisement\AdvertisementCreateRequest;
 use App\Http\Requests\Advertisement\AdvertisementEditRequest;
@@ -38,6 +38,7 @@ class AdvertisementController extends Controller
 
     public function edit(AdvertisementEditRequest $request, int $id)
     {
+        $params = [];
         $advertisement = Advertisement::find($id);
 
         if (!$advertisement)
@@ -47,14 +48,22 @@ class AdvertisementController extends Controller
 
         // Если пользователь не относится к работнику и не является автором объявления, то выкидываем в ошибку
         if (array_search($user->role->code, ["admin", "owner"]) === false
-            && $user->id != $advertisement->user->id)
-            throw new ForbiddenYouException();
+            && $user->id != $advertisement->user_id)
+            throw new ForbiddenForYouException();
+
+        // Если редактирует автор, то отправляем на модерацию
+        if ($user->role->code === "owner") {
+            $params = [
+                "is_moderated" => null,
+                "is_active" => false
+            ];
+        }
 
         // Если пользователь - менеджер, то ограничиваем его в правах
-        if ($user->role->code === "owner")
+        if ($user->role->code === "manager")
             if ($advertisement->is_moderated !== null
                 || !Advertisement::checkEmployeeRelationsByAdvertisement($user->id, $advertisement->id))
-                throw new ForbiddenYouException();
+                throw new ForbiddenForYouException();
 
         // Проверяем фильтры. Если переданы, то должны быть включены и все обязательные фильтры
         if (isset($request->options)
@@ -78,7 +87,8 @@ class AdvertisementController extends Controller
         // Обновляем объявление
         $advertisement->update([
             ...request()->all(),
-            "user_id" => $advertisement->user_id
+            "user_id" => $advertisement->user_id,
+            ...$params
         ]);
 
         return response(null, 202);
@@ -91,17 +101,32 @@ class AdvertisementController extends Controller
         if (!$advertisement)
             throw new NotFoundException("Advertisement");
 
+        // TODO: сделать проверку, что менеджер обрабатывал сделку и тоже имеет доступ (как и админ)
         if ($advertisement->is_deleted === true
-            || $advertisement->is_moderated === false)
-            if ($advertisement->user_id != auth()->user()->id)
-                throw new ForbiddenYouException();
+            || $advertisement->is_moderated !== true
+            || $advertisement->is_archive === true)
+            if ($advertisement->user_id != (auth()->user()->id ?? null))
+                throw new ForbiddenForYouException();
 
         return response(AdvertisementResource::make($advertisement), 200);
     }
 
+    // TODO: Привести в порядок
     public function search(SearchAdvertisementRequest $request)
     {
         $query = Advertisement::select('advertisements.*');
+
+        /*if (($user = auth()->user())->role->code ?? "" !== 'admin')
+            $query->where(function ($q) use ($user) {
+                $q->where([
+                    ["advertisements.advertisement_id", null],
+                    ["advertisements.is_active",    true],
+                    ["advertisements.is_deleted",  false],
+                    ["advertisements.is_moderated", true]
+                ]);
+                if ($user)
+                    $q->orWhere("advertisements.owner_id", $user->id);
+            });*/
 
         if ($request->min_cost)
             $query->where("cost", ">=", $request->min_cost);

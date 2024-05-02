@@ -3,7 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Exceptions\ApiException;
-use App\Exceptions\ForbiddenYouException;
+use App\Exceptions\ForbiddenForYouException;
 use App\Models\User;
 use Closure;
 use Illuminate\Database\Eloquent\Casts\Json;
@@ -51,7 +51,7 @@ class RoleChecker
         }
 
         if ($block || (array_search($userRole, $allowedLevels) === false && count($allowedLevels) > 1))
-            throw new ForbiddenYouException();
+            throw new ForbiddenForYouException();
 
         return $next($request);
     }
