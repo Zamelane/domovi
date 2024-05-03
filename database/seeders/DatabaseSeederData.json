@@ -326,6 +326,14 @@
         {
             "code": "awaiting_agent",
             "description": "Ожидает назначения агента"
+        },
+        {
+            "code": "completed",
+            "description": "Успешно завершена"
+        },
+        {
+            "code": "closed",
+            "description": "Закрыта досрочно"
         }
     ]
 }

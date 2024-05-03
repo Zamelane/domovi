@@ -24,6 +24,10 @@ class Deal extends Model
         "address_id"
     ];
 
+    public function setStatus($code) {
+        $this->deal_status_id = DealStatus::getByCode($code)->id;
+    }
+
     // Связи
     public function user()
     {

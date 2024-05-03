@@ -2,9 +2,9 @@
 
 namespace App\Http\Requests\Address;
 
-use App\Exceptions\ApiException;
+use App\Http\Requests\ApiRequest;
 
-class AddressRequest extends ApiException
+class AddressRequest extends ApiRequest
 {
     public function rules(): array
     {

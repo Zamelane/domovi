@@ -14,10 +14,7 @@ return new class extends Migration
         Schema::create('offices', function (Blueprint $table) {
             $table->id();
             $table->string('name', 75)->nullable();
-            $table->time('open_time');
-            $table->time('close_time');
-            $table->string('work_days');
-            $table->boolean('is_active');
+            $table->boolean('is_active')->default(true);
             $table->foreignId('address_id')->constrained()->cascadeOnUpdate();
             // $table->timestamps();
         });

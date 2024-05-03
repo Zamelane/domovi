@@ -7,6 +7,7 @@ use App\Http\Controllers\AdvertisementController;
 use App\Http\Controllers\FavouriteController;
 use App\Http\Controllers\DealController;
 use App\Http\Controllers\AddressController;
+use App\Http\Controllers\OfficeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -91,22 +92,32 @@ Route::group([
     "prefix" => "deals",
     "middleware" => "auth"
 ], function ($deals) {
+    $deals->get('statuses', 'statuses');
     $deals->middleware('check.role:user|owner')
         ->post('create', 'create');
     $deals->prefix('{dealId}')
         ->group(function ($deal) {
             $deal->get  ('',      'show' );
             $deal->get  ('close', 'close');
-            $deal->patch('',     'edit' );
+            $deal->patch('',      'edit' );
         })
-        ->where('id', '[0-9]+');
+        ->where('dealId', '[0-9]+');
 });
 
 Route::group([
     "controller" => AddressController::class,
     "prefix" => "address"
 ], function ($address) {
-    $address->get('',         'get'      );
-    $address->get('cities',   'getCity'  );
-    $address->get('streets',  'getStreet');
+    $address->post('get',      'get'      );
+    $address->get ('cities',   'getCity'  );
+    $address->get ('streets',  'getStreet');
+});
+
+Route::group([
+    "controller" => OfficeController::class,
+    "prefix" => "offices"
+], function ($address) {
+    $address->get ('',         'get'   );
+    $address->post('create',   'create');
+    $address->get ('{id}',     'edit'  );
 });
