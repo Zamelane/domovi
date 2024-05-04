@@ -48,7 +48,7 @@ class AuthController extends Controller
         User::checkAvailable($user);
 
         if (!$user) {
-            return response()->json(['error' => 'User is not registered'], 401);
+            throw new NotFoundException("User");
         }
 
         return response([

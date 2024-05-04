@@ -84,7 +84,7 @@ class UserController extends Controller
 
     public function create(UserCreateRequest $request)
     {
-        // Если пытаемся создать работника,то валидируем заполнение ВСЕХ ПОЛЕЙ
+        // Если пытаемся создать работника, то валидируем заполнение ВСЕХ ПОЛЕЙ
         $role = $request->role ?? "user";
 
         if (array_search($role, ['owner', 'user']) === false) {
