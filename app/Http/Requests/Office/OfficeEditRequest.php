@@ -2,14 +2,14 @@
 
 namespace App\Http\Requests\Office;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\ApiRequest;
 
-class OfficeEditRequest extends FormRequest
+class OfficeEditRequest extends ApiRequest
 {
     public function rules(): array
     {
         return [
-            'name' => 'unique:offices,name',
+            'name' => 'unique:offices,name,'.$this->id,
             'work_days.*.code' => 'in:monday,tuesday,wednesday,thursday,friday,saturday,sunday',
             'work_days.*.open_time' => 'date_format:H:i',
             'work_days.*.close_time' => 'date_format:H:i|after:open_time',

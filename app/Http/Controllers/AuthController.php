@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Exceptions\InvalidAuthData;
+use App\Exceptions\NotFoundException;
 use App\Http\Requests\Auth\ConfirmLoginUserRequest;
 use App\Http\Requests\Auth\LoginEmployeeRequest;
 use App\Http\Requests\Auth\LoginUserRequest;
@@ -23,10 +24,11 @@ class AuthController extends Controller
 
         // Ищем пользователя по номеру телефона
         $user = User::getByPhone($phone);
-        User::checkAvailable($user);
 
-        if (!$user)
+        if (!$user || array_search($user->role->code, ["user", "owner"]) === false)
             throw new InvalidAuthData();
+
+        User::checkAvailable($user);
 
         $sms = Sms::sendSMS($phone, $ip);
 

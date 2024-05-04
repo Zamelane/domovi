@@ -105,7 +105,7 @@ class AdvertisementController extends Controller
         if ($advertisement->is_deleted === true
             || $advertisement->is_moderated !== true
             || $advertisement->is_archive === true)
-            if ($advertisement->user_id != (auth()->user()->id ?? null))
+            if ($advertisement->user_id !== (auth()->user()->id ?? null))
                 throw new ForbiddenForYouException();
 
         return response(AdvertisementResource::make($advertisement), 200);

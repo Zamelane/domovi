@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Exceptions\ApiException;
+use App\Exceptions\NotFoundException;
 use App\Http\Requests\Office\OfficeCreateRequest;
 use App\Http\Requests\Office\OfficeEditRequest;
 use App\Http\Resources\Offices\OfficeResource;
@@ -39,24 +40,32 @@ class OfficeController extends Controller
         return response(null, 201);
     }
 
-    // TODO: Сделать обновление
-    public function edit(OfficeEditRequest $request)
+    public function edit(OfficeEditRequest $request, int $id)
     {
-        /*$office = Office::create(request([
+        if (!$office = Office::find($id))
+            throw new NotFoundException("Office");
+
+        $office->update(request([
             "name",
             "is_active",
             "address_id"
         ]));
 
-        if ($workDays = $request->work_days)
-            foreach ($workDays as $day)
-                Day::create([
+        if ($workDays = $request->work_days) {
+            foreach ($workDays as $day) {
+                if (!$day) continue;
+                $days[] = $day["code"];
+                Day::firstOrCreate([
                     "code" => $day["code"],
                     "open_time" => $day["open_time"],
                     "close_time" => $day["close_time"],
                     "office_id" => $office->id
                 ]);
+            }
+            Day::where("office_id", $office->id)
+                ->whereNotIn("code", $days ?? [])->delete();
+        }
 
-        return response(null, 201);*/
+        return response(null, 200);
     }
 }

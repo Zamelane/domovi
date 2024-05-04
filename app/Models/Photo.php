@@ -31,10 +31,10 @@ class Photo extends Model
             $fileHash = md5_file($file->getRealPath());
 
             $imageName = "$fileHash.$fileExt";
-            $path = "uploads/$fileExt/";
+            $path = "public/$fileExt/";
 
             if (!Storage::exists($path.$imageName))
-                $file->move  ($path,$imageName );
+                $file->storeAs($path,$imageName);
 
             Photo::firstOrCreate(["name" => $imageName, "advertisement_id" => $advertisementId]);
         }

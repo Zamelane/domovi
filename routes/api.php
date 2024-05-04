@@ -8,6 +8,7 @@ use App\Http\Controllers\FavouriteController;
 use App\Http\Controllers\DealController;
 use App\Http\Controllers\AddressController;
 use App\Http\Controllers\OfficeController;
+use App\Http\Controllers\DocumentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -100,6 +101,11 @@ Route::group([
             $deal->get  ('',      'show' );
             $deal->get  ('close', 'close');
             $deal->patch('',      'edit' );
+            $deal->controller(DocumentController::class)
+                ->group(function ($document) {
+                    $document->post('documents', 'upload');
+                    $document->get ('documents', 'all'   );
+                });
         })
         ->where('dealId', '[0-9]+');
 });
@@ -118,6 +124,21 @@ Route::group([
     "prefix" => "offices"
 ], function ($address) {
     $address->get ('',         'get'   );
-    $address->post('create',   'create');
-    $address->get ('{id}',     'edit'  );
+    $address->middleware('check.role:admin')
+        ->group(function ($privilegedAddress) {
+            $privilegedAddress->post('create',        'create');
+            $privilegedAddress->post('{id}/edit',     'edit'  );
+        });
+});
+
+Route::group([
+    "controller" => DocumentController::class,
+    "prefix" => "documents",
+    "middleware" => "auth"
+], function ($documents) {
+    $documents->prefix('{id}')
+        ->group(function ($document) {
+            $document->get  ('',      'download' );
+        })
+        ->where('id', '[0-9]+');
 });

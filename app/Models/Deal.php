@@ -24,6 +24,19 @@ class Deal extends Model
         "address_id"
     ];
 
+    /**
+     * Проверяет, имеет ли пользователь отношение к сделке
+     * @param $userId
+     * @return bool
+     */
+    public function checkRelation($userId)
+    {
+        $deal = $this;
+        return $deal->user_id === $userId
+            || $deal->employee_id === $userId
+            || $deal->advertisement->user_id === $userId;
+    }
+
     public function setStatus($code) {
         $this->deal_status_id = DealStatus::getByCode($code)->id;
     }
