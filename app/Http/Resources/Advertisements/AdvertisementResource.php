@@ -21,7 +21,6 @@ class AdvertisementResource extends JsonResource
             "transaction_type" => $this->transaction_type,
             "detailed" => [
                 "area"             => $this->area,
-                "count_rooms"      => $this->count_rooms,
                 "measurement_type" => $this->measurement_type,
                 "images"           => ImageResource::collection($this->photos)
             ],
