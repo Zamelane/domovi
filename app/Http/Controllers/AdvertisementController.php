@@ -123,7 +123,7 @@ class AdvertisementController extends Controller
         if ($request->area)
             $query->where("area", ">=", $request->area);
 
-        $query->where([...request(['advertisement_type_id', 'transaction_type', 'count_rooms'])]);
+        $query->where([...request(['advertisement_type_id', 'transaction_type'])]);
 
         if ($request->filters) {
             $id = 0;

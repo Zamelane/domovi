@@ -12,6 +12,7 @@ use App\Http\Controllers\AddressController;
 use App\Http\Controllers\OfficeController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\ComplaintController;
+use App\Http\Controllers\FilterController;
 
 /*
 |--------------------------------------------------------------------------
@@ -184,6 +185,15 @@ Route::group([
         $complaint->get('moderated.list', 'awaitModeratedList');
         $complaint->post('{id}/review',   'review');
     });
+});
+
+// Просмотр фильтро
+Route::group([
+    "controller" => FilterController::class,
+    "prefix" => "filters",
+], function ($filters) {
+    $filters->get(''     , 'get'  );
+    $filters->get('types', 'types');
 });
 
 // Если подходящего роутера не нашлось

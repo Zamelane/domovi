@@ -17,7 +17,6 @@ class Advertisement extends Model
         "advertisement_type_id",
         "transaction_type",
         "area",
-        "count_rooms",
         "measurement_type",
         "is_active",
         "is_moderated",

@@ -16,7 +16,6 @@ class SearchAdvertisementRequest extends FormRequest
             'advertisement_type_id' => 'exists:advertisement_types,id',
             'transaction_type'      => 'in:order,buy',
             'area'                  => 'integer',
-            'count_rooms'           => 'integer|min:0|max:127',
             'filters'               => 'array|min:1'
         ];
     }

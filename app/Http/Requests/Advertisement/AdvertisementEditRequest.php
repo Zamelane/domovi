@@ -15,7 +15,6 @@ class AdvertisementEditRequest extends FormRequest
             'advertisement_type_id' => 'exists:advertisement_types,id',
             'transaction_type'      => 'in:order,buy',
             'area'                  => 'integer',
-            'count_rooms'           => 'integer|min:0|max:127',
             'measurement_type'      => 'in:ar,m2',
             'structure'             => 'integer',
             'building'              => 'integer',

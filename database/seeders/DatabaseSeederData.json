@@ -55,6 +55,11 @@
     ],
     "Filter": [
         {
+            "name": "Количество комнат",
+            "code": "count_rooms",
+            "type": "write_number"
+        },
+        {
             "name": "Этаж",
             "code": "etage",
             "type": "write_number"
@@ -245,6 +250,9 @@
                 },
                 {
                     "code": "parkovka"
+                },
+                {
+                    "code": "count_rooms"
                 }
             ],
             "AdvertisementType": {
@@ -292,10 +300,54 @@
                 },
                 {
                     "code": "parkovka"
+                },
+                {
+                    "code": "count_rooms"
                 }
             ],
             "AdvertisementType": {
                 "name": "Квартира в новостройке",
+                "is_commercial": false
+            }
+        },
+        {
+            "Filters": [
+                {
+                    "code": "etage"
+                },
+                {
+                    "code": "allEtages"
+                },
+                {
+                    "code": "houseBuildingYear"
+                },
+                {
+                    "code": "heigthPotol"
+                },
+                {
+                    "code": "typeHouse"
+                },
+                {
+                    "code": "windowView"
+                },
+                {
+                    "code": "remontType"
+                },
+                {
+                    "code": "availableLift"
+                },
+                {
+                    "code": "pandys"
+                },
+                {
+                    "code": "mysoroprovod"
+                },
+                {
+                    "code": "parkovka"
+                }
+            ],
+            "AdvertisementType": {
+                "name": "Комната",
                 "is_commercial": false
             }
         }

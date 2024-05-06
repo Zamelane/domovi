@@ -2,7 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Filter\FilterGetRequest;
+use App\Http\Resources\FilterInfoResource;
+use App\Http\Resources\Filters\FilterResource;
 use App\Models\AdFilterValue;
+use App\Models\AdvertisementType;
 use App\Models\AdvertisementTypeFilter;
 use App\Models\Filter;
 
@@ -83,5 +87,23 @@ class FilterController extends Controller
         // Удаляем все фильтры, которые не были перечислены в запросе (т.е. автоматом помеченные как ненужные)
         AdFilterValue::whereNotIn("filter_id", $idsToSave)
             ->where("advertisement_id", $advertisement_id)->delete();
+    }
+
+    public function get(FilterGetRequest $request)
+    {
+        $query = Filter::where([...request(['code'])]);
+        if ($request->advertisement_type)
+            $query->join('advertisement_type_filters', 'filter_id', '=', 'filters.id')
+                ->join('advertisement_types', 'advertisement_types.id', '=', 'advertisement_type_id')
+                ->where('advertisement_types.name', $request->advertisement_type)
+                ->select('filters.*');
+        return response(FilterInfoResource::collection(
+            $query->get()
+        ), 200);
+    }
+
+    public function types()
+    {
+        return response(AdvertisementType::all(), 200);
     }
 }

@@ -32,7 +32,6 @@ return new class extends Migration
             $table->foreignId  ('advertisement_type_id'               )               ->constrained()->cascadeOnUpdate();
             $table->enum       ('transaction_type', $transaction_types);
             $table->integer    ('area'                                );
-            $table->tinyInteger('count_rooms'                         )->nullable();
             $table->enum       ('measurement_type', $measurement_types);
             $table->boolean    ('is_active'                           )            ->default(false);
             $table->boolean    ('is_moderated'                        )->nullable()->default(null);

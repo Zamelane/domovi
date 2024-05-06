@@ -15,7 +15,6 @@ class AdvertisementCreateRequest extends ApiRequest
             'advertisement_type_id' => 'required|exists:advertisement_types,id',
             'transaction_type'      => 'required|in:order,buy',
             'area'                  => 'required|integer',
-            'count_rooms'           => 'required|integer|min:0|max:127',
             'measurement_type'      => 'required|in:ar,m2',
             'structure'             => 'integer',
             'building'              => 'integer',
