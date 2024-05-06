@@ -25,7 +25,7 @@ class Sms extends Model
 
     // Скрытые поля
     protected $hidden = [
-        'code',
+        //'code', // TODO: Закомментить
         'id'
     ];
 
