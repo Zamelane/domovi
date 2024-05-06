@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Exceptions\ApiException;
+use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AdvertisementController;
@@ -9,6 +11,7 @@ use App\Http\Controllers\DealController;
 use App\Http\Controllers\AddressController;
 use App\Http\Controllers\OfficeController;
 use App\Http\Controllers\DocumentController;
+use App\Http\Controllers\ComplaintController;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,8 +24,7 @@ use App\Http\Controllers\DocumentController;
 |
 */
 
-// TODO: Выводить красивые ошибки для неопознанных роутов
-
+// Управление авторизацией
 Route::controller(AuthController::class)
     ->prefix('auth')
     ->group(function ($unauthorized) {
@@ -33,14 +35,15 @@ Route::controller(AuthController::class)
        $unauthorized->middleware('auth')->get('logout','logout'          );
     });
 
+// Управление пользователями
 Route::group([
     "controller" => UserController::class,
     "middleware" => "auth",
     "prefix" => "users"
 ], function ($users) {
     $users->middleware('check.role:^^guest')->group(function ($me) {
-        $me->get('me',       'me'  );
-        $me->patch('me',     'edit');
+        $me->get  ('me',       'me'    );
+        $me->patch('me',     'edit'    );
         $me->patch('{id}',   'edit'    )->where('id', '[0-9]+');
     });
     $users->middleware('check.role:^manager')->group(function ($usersAll) {
@@ -53,6 +56,7 @@ Route::group([
     $users->middleware('check.role:^admin')->post('create', 'create');
 });
 
+// Управление объявлениями
 Route::group([
     "controller" => AdvertisementController::class,
     "prefix" => "advertisement"
@@ -65,6 +69,7 @@ Route::group([
         ->middleware('check.role:^owner')
         ->group(function ($ad) {
             $ad->middleware('check.role:=owner')->post('create', 'create');
+            $ad->get('me', 'me');
             $ad->prefix('{id}')
                 ->group(function ($privilegedAd) {
                     $privilegedAd->delete('', 'delete');
@@ -74,20 +79,22 @@ Route::group([
     });
 });
 
+// Управление избранным
 Route::group([
     "controller" => FavouriteController::class,
     "prefix" => "favourites",
     "middleware" => "auth"
 ], function ($favourites) {
     $favourites->middleware('check.role:user|owner')
-        ->prefix('{id}')
         ->group(function ($privilegedFavourite) {
-            $privilegedFavourite->delete('', 'delete');
-            $privilegedFavourite->put   ('', 'add'   );
+            $privilegedFavourite->delete('{id}', 'delete');
+            $privilegedFavourite->put   ('{id}', 'add'   );
+            $privilegedFavourite->get   (''    , 'list'  );
         })
         ->where('id', '[0-9]+');
 });
 
+// Управление заказами
 Route::group([
     "controller" => DealController::class,
     "prefix" => "deals",
@@ -110,6 +117,7 @@ Route::group([
         ->where('dealId', '[0-9]+');
 });
 
+// Управление адресами
 Route::group([
     "controller" => AddressController::class,
     "prefix" => "address"
@@ -119,6 +127,7 @@ Route::group([
     $address->get ('streets',  'getStreet');
 });
 
+// Управление офисами
 Route::group([
     "controller" => OfficeController::class,
     "prefix" => "offices"
@@ -131,6 +140,7 @@ Route::group([
         });
 });
 
+// Управление документами
 Route::group([
     "controller" => DocumentController::class,
     "prefix" => "documents",
@@ -141,4 +151,42 @@ Route::group([
             $document->get  ('',      'download' );
         })
         ->where('id', '[0-9]+');
+});
+
+// Управление отзывами
+Route::group([
+    "controller" => ReviewController::class,
+    "prefix" => "reviews"
+], function ($reviews) {
+    $reviews->middleware('check.role:user|owner')->group(function ($review) {
+        $review->post  ('create'     , 'create');
+        $review->get   ('me'         , 'listMe');
+        $review->delete('{id}'       , 'delete');
+        $review->post  ('{id}'       , 'edit'  );
+    });
+    $reviews->middleware('check.role:^manager')->group(function ($review) {
+       $review->get  ('moderated.list', 'awaitModeratedList');
+       $review->patch('{id}'          , 'setModeratedStatus');
+       $review->middleware('check.role:=admin')->get('search', 'search');
+    });
+    $reviews->get('advertisement/{advId}',  'list')->where('id', '[0-9]+');
+    $reviews->get('{id}'                 ,  'show');
+});
+
+// Упарвление жалобами
+Route::group([
+    "controller" => ComplaintController::class,
+    "prefix" => "complaints",
+    "middleware" => "auth"
+], function ($complaints) {
+    $complaints->middleware('check.role:user|owner')->post('create', 'create');
+    $complaints->middleware('check.role:^manager')->group(function ($complaint) {
+        $complaint->get('moderated.list', 'awaitModeratedList');
+        $complaint->post('{id}/review',   'review');
+    });
+});
+
+// Если подходящего роутера не нашлось
+Route::get('/{any}', function () {
+    throw new ApiException(404, 'Not found');
 });

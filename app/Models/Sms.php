@@ -84,7 +84,7 @@ class Sms extends Model
             throw new ApiException(429, 'Limitation of sending sms');
 
         $token = Str::random(25);
-        $code = Str::random(6);
+        $code = strtoupper(Str::random(6));
         return Sms::create([
             'token' => $token,
             'phone' => $phone,

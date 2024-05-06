@@ -116,30 +116,15 @@ class AdvertisementController extends Controller
     {
         $query = Advertisement::select('advertisements.*');
 
-        /*if (($user = auth()->user())->role->code ?? "" !== 'admin')
-            $query->where(function ($q) use ($user) {
-                $q->where([
-                    ["advertisements.advertisement_id", null],
-                    ["advertisements.is_active",    true],
-                    ["advertisements.is_deleted",  false],
-                    ["advertisements.is_moderated", true]
-                ]);
-                if ($user)
-                    $q->orWhere("advertisements.owner_id", $user->id);
-            });*/
-
         if ($request->min_cost)
             $query->where("cost", ">=", $request->min_cost);
         if ($request->max_cost)
             $query->where("cost", "<=", $request->max_cost);
-        if ($request->advertisement_type_id)
-            $query->where("advertisement_type_id", "=", $request->advertisement_type_id);
-        if ($request->transaction_type)
-            $query->where("transaction_type", "=", $request->transaction_type);
         if ($request->area)
             $query->where("area", ">=", $request->area);
-        if ($request->count_rooms)
-            $query->where("count_rooms", "=", $request->count_rooms);
+
+        $query->where([...request(['advertisement_type_id', 'transaction_type', 'count_rooms'])]);
+
         if ($request->filters) {
             $id = 0;
             foreach ($request->filters as $filter => $value)
@@ -174,6 +159,16 @@ class AdvertisementController extends Controller
                 $query->where("streets.name", $request->street);
         }
 
+        return response([
+            "advertisements" => AdvertisementMinResource::collection($query->simplePaginate()),
+            "allPages" => ceil($query->count() / 15)
+        ]);
+    }
+
+    public function me()
+    {
+        $user = auth()->user();
+        $query = Advertisement::where('user_id', $user->id);
         return response([
             "advertisements" => AdvertisementMinResource::collection($query->simplePaginate(15)->all()),
             "allPages" => ceil($query->count() / 15)

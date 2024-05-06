@@ -32,9 +32,7 @@ class AuthController extends Controller
 
         $sms = Sms::sendSMS($phone, $ip);
 
-        return response([
-            $sms
-        ]);
+        return response($sms);
     }
     public function confirmLogin(ConfirmLoginUserRequest $request)
     {

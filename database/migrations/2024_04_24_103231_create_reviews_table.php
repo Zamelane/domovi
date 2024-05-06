@@ -16,10 +16,10 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->cascadeOnUpdate();
             $table->foreignId('advertisement_id')->constrained()->cascadeOnUpdate();
             $table->text('description');
-            $table->tinyInteger('start');
+            $table->tinyInteger('stars');
             $table->dateTime('create_datetime');
             $table->dateTime('update_datetime')->nullable();
-            $table->boolean('is_moderation');
+            $table->boolean('is_moderation')->nullable();
             $table->boolean('is_services');
             // $table->timestamps();
         });

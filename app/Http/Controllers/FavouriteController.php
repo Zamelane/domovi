@@ -3,13 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Exceptions\NotFoundException;
+use App\Http\Resources\FavouriteResource;
 use App\Models\Advertisement;
 use App\Models\Favourite;
 use Illuminate\Http\Request;
 
 class FavouriteController extends Controller
 {
-    public function add(Request $request, int $id) {
+    public function add(Request $request, int $id)
+    {
         if (!$advertisement = Advertisement::find($id))
             throw new NotFoundException("Advertisement");
 
@@ -20,12 +22,20 @@ class FavouriteController extends Controller
 
         return response(null, 201);
     }
-    public function delete(Request $request, int $id) {
+    public function delete(Request $request, int $id)
+    {
         Favourite::where([
             "user_id" => auth()->user()->id,
             "advertisement_id" => $id
         ])->delete();
 
         return response(null, 204);
+    }
+    public function list()
+    {
+        $user = auth()->user();
+        return response(FavouriteResource::collection(
+            Favourite::where('user_id', $user->id)->simplePaginate(15)
+        ), 200);
     }
 }

@@ -26,6 +26,22 @@ class Advertisement extends Model
         "cost"
     ];
 
+    /**
+     * Проверяет, получал ли пользователь услугу.
+     * @param int $userId
+     * @return bool
+     */
+    public function checkIsServices(int $userId): bool
+    {
+        $advertisementId = $this->id;
+        $deal = Deal::where([
+            ['advertisement_id', '=', $advertisementId],
+            ['user_id', '=', $userId]
+        ])->exists();
+
+        return $deal;
+    }
+
     /*
      * Создаёт и возвращает объявление по полям из запроса.
      */
