@@ -20,7 +20,7 @@ class AddressController extends Controller
 
     public function getCity(CityRequest $request)
     {
-        $cities = City::where("name", "LIKE", "$request->city%")
+        $cities = City::where("name", "LIKE", "%$request->city%")
             ->limit(10)
             ->get();
         return response($cities, 200);
@@ -28,7 +28,7 @@ class AddressController extends Controller
 
     public function getStreet(StreetRequest $request)
     {
-        $query = Street::where("streets.name", "LIKE", "$request->street%");
+        $query = Street::where("streets.name", "LIKE", "%$request->street%");
 
         if ($request->city_id)
             $query->where("city_id", $request->city_id);

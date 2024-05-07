@@ -5,10 +5,12 @@ namespace Database\Seeders;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use App\Models\AdvertisementType;
 use App\Models\AdvertisementTypeFilter;
+use App\Models\City;
 use App\Models\DealStatus;
 use App\Models\Filter;
 use App\Models\FilterValue;
 use App\Models\Role;
+use App\Models\Street;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Casts\Json;
 use Illuminate\Database\Seeder;
@@ -23,11 +25,18 @@ class DatabaseSeeder extends Seeder
         "FilterValue" => FilterValue::class,
         "User" => User::class,
         "Role" => Role::class,
-        "DealStatuses" => DealStatus::class
+        "DealStatuses" => DealStatus::class,
+        "Street" => Street::class,
+        "City" => City::class
     ];
     public function run(): void
     {
-        $seederDataPath = env("SEEDER_DATA_FILE_PATH");
+        $seederDataPaths = explode(',', env("SEEDER_DATA_FILE_PATH"));
+
+        foreach ($seederDataPaths as $seederDataPath)
+            $this->seed($seederDataPath);
+    }
+    public function seed($seederDataPath) {
         if (!file_exists($seederDataPath)) {
             $this->command->error("Database seeder data not found...");
             return;
