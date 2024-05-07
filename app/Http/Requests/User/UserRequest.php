@@ -14,6 +14,8 @@ class UserRequest extends ApiRequest
             'last_name'             => 'string|min:3|max:30',
             'patronymic'            => 'string|min:3|max:30',
             'phone'                 => 'string|min:2|max:15',
+            'role'                  => 'exists:roles,code',
+            'is_employee'           => 'boolean',
             'is_passed_moderation'  => 'boolean',
             'is_banned'             => 'boolean'
         ];

@@ -11,6 +11,7 @@ use App\Http\Requests\User\UserRequest;
 use App\Http\Resources\Users\UserResource;
 use App\Models\Role;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Casts\Json;
 use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
@@ -47,7 +48,21 @@ class UserController extends Controller
 
     public function search(UserRequest $request) {
         $searchParams = request(['first_name', 'last_name', 'patronymic', 'phone', 'is_passed_moderation', 'is_banned']);
-        return response(UserResource::collection(User::searchByParams($searchParams)));
+
+        $query = User::searchByParams($searchParams);
+
+        if ($request->role)
+            $query->where('role_id', Role::searchByCode($request->role)->id);
+
+        if ($request->is_employee !== null)
+        {
+            $rolesIds = [Role::searchByCode('admin')->id, Role::searchByCode('manager')->id];
+            if ($request->is_employee == true)
+                $query->whereIn('role_id', $rolesIds);
+            else
+                $query->whereNotIn('role_id', $rolesIds);
+        }
+        return response(UserResource::collection($query->simplePaginate()));
     }
 
     public function edit(UserEditRequest $request, int $id = null)

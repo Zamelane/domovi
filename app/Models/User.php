@@ -47,7 +47,7 @@ class User extends Authenticatable implements JWTSubject
             $wheres[] = [$key, 'LIKE', "%$value%"];
         }
 
-        return User::where($wheres)->simplePaginate(15);
+        return User::where($wheres);
     }
 
     public static function checkAvailable(User $user) {

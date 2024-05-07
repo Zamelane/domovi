@@ -15,6 +15,11 @@ class Role extends Model
         'code'
     ];
 
+    public static function searchByCode($code)
+    {
+        return Role::where('code', $code)->first();
+    }
+
     /** Связи **/
     // Role <-->>Users
     public function users()
