@@ -33,10 +33,14 @@ class Advertisement extends Model
     public function checkIsServices(int $userId): bool
     {
         $advertisementId = $this->id;
-        $deal = Deal::where([
-            ['advertisement_id', '=', $advertisementId],
-            ['user_id', '=', $userId]
-        ])->exists();
+        $deal = Deal::select('deals.*')->join('advertisements', 'advertisements.id', '=', 'deals.advertisement_id')
+            ->where([
+                ['advertisements.advertisement_id', $this->id],
+                ['deals.user_id', $userId]
+            ])->whereIn('deals.deal_status_id', [
+                DealStatus::getByCode('closed')->id,
+                DealStatus::getByCode('completed')->id
+            ])->exists();
 
         return $deal;
     }

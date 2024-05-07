@@ -28,7 +28,7 @@ class ReviewController extends Controller
         if (Review::where([
                 ['advertisement_id', '=', $advertisement->id],
                 ['user_id', '=', $user->id]
-            ]))
+            ])->exists())
             throw new ApiException(400, 'Have you already left a review for this ad');
 
         $review = Review::create([
@@ -106,7 +106,10 @@ class ReviewController extends Controller
             && $user->role->code !== 'admin'*/)
             return new ForbiddenForYouException();
 
-        $review->update([...request(['stars', 'description'])]);
+        $review->update([
+            ...request(['stars', 'description']),
+            'is_moderation' => null
+        ]);
 
         return response(null, 200);
     }

@@ -95,7 +95,7 @@ Route::group([
         ->where('id', '[0-9]+');
 });
 
-// Управление заказами
+// Управление сделками
 Route::group([
     "controller" => DealController::class,
     "prefix" => "deals",
@@ -103,7 +103,10 @@ Route::group([
 ], function ($deals) {
     $deals->get('statuses', 'statuses');
     $deals->middleware('check.role:user|owner')
-        ->post('create', 'create');
+        ->group(function ($deal) {
+            $deal->post('create', 'create');
+            $deal->get('me', 'me');
+        });
     $deals->prefix('{dealId}')
         ->group(function ($deal) {
             $deal->get  ('',      'show' );
@@ -187,7 +190,7 @@ Route::group([
     });
 });
 
-// Просмотр фильтро
+// Просмотр фильтров
 Route::group([
     "controller" => FilterController::class,
     "prefix" => "filters",

@@ -46,7 +46,7 @@ class UserController extends Controller
     }
 
     public function search(UserRequest $request) {
-        $searchParams = request(['first_name', 'last_name', 'patronymic', 'phone']);
+        $searchParams = request(['first_name', 'last_name', 'patronymic', 'phone', 'is_passed_moderation', 'is_banned']);
         return response(UserResource::collection(User::searchByParams($searchParams)));
     }
 
@@ -61,7 +61,7 @@ class UserController extends Controller
         }
 
         $editCredentials = $request->all();
-        $currUser = $id ? auth()->user() : $editUser;
+        $currUser = auth()->user();
         if (array_search($currUser->role->code, ["user", "owner"]) > -1) {
             if ($currUser->id !== $id)
                 throw new ForbiddenForYouException();
@@ -71,7 +71,7 @@ class UserController extends Controller
                 if ($editUser->role->code === "admin")
                     throw new ForbiddenForYouException();
             if ($request->role) {
-                if ($request->role === "admin" && $currUser->role !== "admin")
+                if ($request->role === "admin" && $currUser->role->code !== "admin")
                     $request->role = "manager";
                 $role = Role::where('code', $request->role)->first();
                 $editUser->role_id = $role->id;

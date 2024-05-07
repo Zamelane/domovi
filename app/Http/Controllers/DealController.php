@@ -76,6 +76,14 @@ class DealController extends Controller
         if (array_search($user->role->code, ["owner", "user"]) === false)
             throw new ForbiddenForYouException();
 
+        // Проверяем, что нет открытых сделок этим пользователем для этого объявления
+        if (Deal::select('deals.*')->join('advertisements', 'advertisements.id', '=', 'deals.advertisement_id')
+            ->where([
+                ['advertisements.advertisement_id', $request->advertisement_id],
+                ['deals.user_id', $user->id]
+            ])->whereNotIn('deals.deal_status_id', [DealStatus::getByCode('closed')->id, DealStatus::getByCode('completed')->id])->exists())
+            throw new ApiException(400, 'You have already made a deal');
+
         // Если идёт аренда, то обязательна дата желаемого заезда и выезда
         if ($advertisement->transaction_type === "order")
             RulesChecker::check([
@@ -167,6 +175,16 @@ class DealController extends Controller
         $deal->update($editData);
 
         return response(null, 200);
+    }
+
+    public function me()
+    {
+        $user = auth()->user();
+        $query = Deal::select('deals.*')->where('deals.user_id', $user->id);
+        if ($user->role->code === 'owner')
+            $query->join('advertisements', 'advertisements.id', '=', 'deals.advertisement_id')
+                ->where('advertisements.user_id', $user->id);
+        return response(DealResource::collection($query->simplePaginate()), 200);
     }
 
     public function statuses()

@@ -20,6 +20,7 @@ class AdvertisementEditRequest extends FormRequest
             'building'              => 'integer',
             'apartament'            => 'integer',
             'is_active'             => 'boolean',
+            'is_moderated'          => 'boolean',
             'cost'                  => 'decimal:0,2|min:0|max:99999999999999.99',
             'photos'                => 'array',
             'photos.*'              => 'file|max:2048|mimes:jpeg,jpg,png',
