@@ -2,9 +2,9 @@
 
 namespace App\Http\Requests\Advertisement;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\ApiRequest;
 
-class SearchAdvertisementRequest extends FormRequest
+class SearchAdvertisementRequest extends ApiRequest
 {
     public function rules(): array
     {
@@ -16,7 +16,8 @@ class SearchAdvertisementRequest extends FormRequest
             'advertisement_type_id' => 'exists:advertisement_types,id',
             'transaction_type'      => 'in:order,buy',
             'area'                  => 'integer',
-            'filters'               => 'array|min:1'
+            'filters'               => 'array|min:1',
+            'is_moderated'          => 'nullable|boolean'
         ];
     }
 }

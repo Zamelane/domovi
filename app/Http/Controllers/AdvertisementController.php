@@ -114,7 +114,22 @@ class AdvertisementController extends Controller
     // TODO: Привести в порядок
     public function search(SearchAdvertisementRequest $request)
     {
-        $query = Advertisement::select('advertisements.*');
+        $user = auth()->user();
+        $isPrivileged = $user ? array_search($user->role->code, ['admin', 'manager']) !== false : false;
+        $query = Advertisement::select('advertisements.*')
+            ->where(function ($q) use ($user, $isPrivileged) {
+                if (!$user || !$isPrivileged)
+                    $q->where([
+                        ['is_deleted', false],
+                        ['is_archive', false],
+                        ['is_moderated', true]
+                    ]);
+                if ($user && $user->role->code === 'owner')
+                    $q->orWhere('user_id', $user->id);
+            });
+
+        if ($isPrivileged)
+            $query->where('is_moderated', request()->is_moderated);
 
         if ($request->min_cost)
             $query->where("cost", ">=", $request->min_cost);
@@ -173,5 +188,21 @@ class AdvertisementController extends Controller
             "advertisements" => AdvertisementMinResource::collection($query->simplePaginate(15)->all()),
             "allPages" => ceil($query->count() / 15)
         ]);
+    }
+
+    public function delete(int $id)
+    {
+        if (!$advertisement = Advertisement::find($id))
+            throw new NotFoundException('Advertisement');
+
+        $user = auth()->user();
+
+        if ($advertisement->user_id != $user->id
+            && $user->role->code !== 'admin')
+            throw new ForbiddenForYouException();
+
+        $advertisement->update(['is_deleted' => true]);
+
+        return response(null, 200);
     }
 }

@@ -13,6 +13,7 @@ class AdvertisementMinResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
+        $user = auth()->user();
         $response = [
             "id"               => $this->id,
             "address"          => AddressResource::make($this->address),
@@ -26,6 +27,12 @@ class AdvertisementMinResource extends JsonResource
             "filters"          => FilterResource::collection($this->ad_filter_values),
             "cost"             => $this->cost
         ];
+
+        if ($user && array_search($user->role->code, ['admin', 'manager']) !== false)
+        {
+            $response["is_moderated"] = $this->is_moderated;
+            $response["is_archive"] = $this->is_archive;
+        }
 
         return $response;
     }

@@ -12,7 +12,7 @@ class SignupUserRequest extends ApiRequest
         return [
             'first_name'    => 'required|string|min:3|max:32',
             'last_name'     => 'required|string|min:3|max:32',
-            'patronymic'    => 'required|string|min:3|max:32',
+            'patronymic'    => 'string|min:3|max:32',
             'phone'         => 'required|integer|unique:users',
             'role'          => 'in:owner,user',
             'sms_token'     => 'string|min:8',
