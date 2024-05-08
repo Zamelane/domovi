@@ -9,9 +9,8 @@ use App\Http\Requests\User\UserCreateRequest;
 use App\Http\Requests\User\UserEditRequest;
 use App\Http\Requests\User\UserRequest;
 use App\Http\Resources\Users\UserResource;
-use App\Models\Role;
-use App\Models\User;
-use Illuminate\Database\Eloquent\Casts\Json;
+use App\Models\User\Role;
+use App\Models\User\User;
 use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller

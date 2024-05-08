@@ -11,8 +11,8 @@ use App\Http\Requests\Review\ReviewSearchRequest;
 use App\Http\Requests\Review\ReviewSetModeratedStatusRequest;
 use App\Http\Resources\Reviews\ReviewMinResource;
 use App\Http\Resources\Reviews\ReviewResource;
-use App\Models\Advertisement;
-use App\Models\Review;
+use App\Models\Advertisement\Advertisement;
+use App\Models\Review\Review;
 
 class ReviewController extends Controller
 {

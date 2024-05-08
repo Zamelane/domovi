@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Exceptions\NotFoundException;
-use App\Http\Resources\FavouriteResource;
-use App\Models\Advertisement;
-use App\Models\Favourite;
+use App\Http\Resources\Favourites\FavouriteResource;
+use App\Models\Advertisement\Advertisement;
+use App\Models\Advertisement\Favourite;
 use Illuminate\Http\Request;
 
 class FavouriteController extends Controller
@@ -34,8 +34,8 @@ class FavouriteController extends Controller
     public function list()
     {
         $user = auth()->user();
-        return response(FavouriteResource::collection(
-            Favourite::where('user_id', $user->id)->simplePaginate(15)
-        ), 200);
+        return response([
+            "advertisements" => FavouriteResource::collection(Favourite::where('user_id', $user->id)->simplePaginate(15))
+        ], 200);
     }
 }

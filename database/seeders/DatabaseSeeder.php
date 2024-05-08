@@ -3,18 +3,16 @@
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use App\Models\AdvertisementType;
-use App\Models\AdvertisementTypeFilter;
-use App\Models\City;
-use App\Models\DealStatus;
-use App\Models\Filter;
-use App\Models\FilterValue;
-use App\Models\Role;
-use App\Models\Street;
-use App\Models\User;
-use Illuminate\Database\Eloquent\Casts\Json;
+use App\Models\Addresses\City;
+use App\Models\Addresses\Street;
+use App\Models\Advertisement\AdvertisementType;
+use App\Models\Advertisement\AdvertisementTypeFilter;
+use App\Models\Deals\DealStatus;
+use App\Models\Filters\Filter;
+use App\Models\Filters\FilterValue;
+use App\Models\User\Role;
+use App\Models\User\User;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Str;
 
 class DatabaseSeeder extends Seeder
 {

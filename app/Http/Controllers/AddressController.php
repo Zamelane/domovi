@@ -7,9 +7,9 @@ use App\Http\Requests\Address\CityRequest;
 use App\Http\Requests\Address\StreetRequest;
 use App\Http\Resources\Addresses\AddressResource;
 use App\Http\Resources\Streets\StreetResource;
-use App\Models\Address;
-use App\Models\City;
-use App\Models\Street;
+use App\Models\Addresses\Address;
+use App\Models\Addresses\City;
+use App\Models\Addresses\Street;
 
 class AddressController extends Controller
 {

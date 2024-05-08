@@ -5,16 +5,16 @@ namespace App\Http\Controllers;
 use App\Exceptions\ForbiddenForYouException;
 use App\Exceptions\NotFoundException;
 use App\Http\Requests\Document\DocumentUploadRequest;
-use App\Http\Resources\DocumentResource;
-use App\Models\Deal;
-use App\Models\Document;
+use App\Http\Resources\Documents\DocumentResource;
+use App\Models\Deals\Deal;
+use App\Models\Document\Document;
 
 class DocumentController extends Controller
 {
     public function download(int $id)
     {
         if (!$document = Document::find($id))
-            throw new NotFoundException("Document");
+            throw new NotFoundException("Documents");
 
         $user = auth()->user();
 

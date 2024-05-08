@@ -2,14 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Exceptions\ApiException;
 use App\Exceptions\NotFoundException;
 use App\Http\Requests\Office\OfficeCreateRequest;
 use App\Http\Requests\Office\OfficeEditRequest;
 use App\Http\Resources\Offices\OfficeResource;
-use App\Models\Day;
-use App\Models\Office;
-use Illuminate\Database\Eloquent\Casts\Json;
+use App\Models\Office\Day;
+use App\Models\Office\Office;
 
 class OfficeController extends Controller
 {

@@ -10,9 +10,8 @@ use App\Http\Requests\Advertisement\SearchAdvertisementRequest;
 use App\Http\Resources\Advertisements\AdvertisementMinResource;
 use App\Http\Resources\Advertisements\AdvertisementResource;
 use App\Http\Utils\RulesChecker;
-use App\Models\Advertisement;
-use App\Models\Filter;
-use App\Models\Photo;
+use App\Models\Advertisement\Advertisement;
+use App\Models\Advertisement\Photo;
 use Illuminate\Http\Request;
 
 class AdvertisementController extends Controller

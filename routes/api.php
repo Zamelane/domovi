@@ -13,6 +13,7 @@ use App\Http\Controllers\OfficeController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\ComplaintController;
 use App\Http\Controllers\FilterController;
+use App\Http\Controllers\StatisticsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -197,6 +198,16 @@ Route::group([
 ], function ($filters) {
     $filters->get(''     , 'get'  );
     $filters->get('types', 'types');
+});
+
+Route::group([
+    "controller" => StatisticsController::class,
+    "prefix" => "statistics"
+], function ($statistics) {
+    $statistics->get('all.completed.deals', 'allCompletedDeals');
+    $statistics->middleware('check.role:admin|manager')->group(function ($statistic) {
+        $statistic->get('income.for.period', 'incomeForPeriod');
+    });
 });
 
 // Если подходящего роутера не нашлось

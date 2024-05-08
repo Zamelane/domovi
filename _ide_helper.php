@@ -1840,7 +1840,7 @@ namespace Illuminate\Support\Facades {
                     /**
          * Get the currently authenticated user.
          *
-         * @return \App\Models\User|null 
+         * @return \App\Models\User\User|null 
          * @static 
          */        public static function user()
         {
@@ -1850,7 +1850,7 @@ namespace Illuminate\Support\Facades {
                     /**
          * Get the currently authenticated user or throws an exception.
          *
-         * @return \App\Models\User 
+         * @return \App\Models\User\User 
          * @throws \Tymon\JWTAuth\Exceptions\UserNotDefinedException
          * @static 
          */        public static function userOrFail()
@@ -2047,7 +2047,7 @@ namespace Illuminate\Support\Facades {
                     /**
          * Return the currently cached user.
          *
-         * @return \App\Models\User|null 
+         * @return \App\Models\User\User|null 
          * @static 
          */        public static function getUser()
         {
@@ -2088,7 +2088,7 @@ namespace Illuminate\Support\Facades {
                     /**
          * Get the last user we attempted to authenticate.
          *
-         * @return \App\Models\User 
+         * @return \App\Models\User\User 
          * @static 
          */        public static function getLastAttempted()
         {
@@ -2098,7 +2098,7 @@ namespace Illuminate\Support\Facades {
                     /**
          * Determine if the current user is authenticated. If not, throw an exception.
          *
-         * @return \App\Models\User 
+         * @return \App\Models\User\User 
          * @throws \Illuminate\Auth\AuthenticationException
          * @static 
          */        public static function authenticate()

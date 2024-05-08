@@ -7,7 +7,7 @@ use App\Exceptions\NotFoundException;
 use App\Http\Requests\Complaint\ComplaintCreateRequest;
 use App\Http\Requests\Complaint\ComplaintReviewRequest;
 use App\Http\Resources\Complaint\ComplaintResource;
-use App\Models\Complaint;
+use App\Models\Complaint\Complaint;
 
 class ComplaintController extends Controller
 {

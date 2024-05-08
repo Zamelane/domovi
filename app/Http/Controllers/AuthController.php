@@ -8,10 +8,9 @@ use App\Http\Requests\Auth\ConfirmLoginUserRequest;
 use App\Http\Requests\Auth\LoginEmployeeRequest;
 use App\Http\Requests\Auth\LoginUserRequest;
 use App\Http\Requests\Auth\SignupUserRequest;
-use App\Http\Requests\Auth\SMSSendRequest;
-use App\Models\Role;
-use App\Models\Sms;
-use App\Models\User;
+use App\Models\User\Role;
+use App\Models\User\Sms;
+use App\Models\User\User;
 use Illuminate\Support\Facades\Auth;
 use Request;
 

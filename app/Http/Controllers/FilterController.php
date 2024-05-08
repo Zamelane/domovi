@@ -3,12 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Filter\FilterGetRequest;
-use App\Http\Resources\FilterInfoResource;
-use App\Http\Resources\Filters\FilterResource;
-use App\Models\AdFilterValue;
-use App\Models\AdvertisementType;
-use App\Models\AdvertisementTypeFilter;
-use App\Models\Filter;
+use App\Http\Resources\Filters\FilterInfoResource;
+use App\Models\Advertisement\AdvertisementType;
+use App\Models\Advertisement\AdvertisementTypeFilter;
+use App\Models\Filters\AdFilterValue;
+use App\Models\Filters\Filter;
 
 class FilterController extends Controller
 {

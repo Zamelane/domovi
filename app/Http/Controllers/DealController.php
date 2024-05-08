@@ -9,10 +9,10 @@ use App\Http\Requests\Deal\DealCreateRequest;
 use App\Http\Requests\Deal\DealEditRequest;
 use App\Http\Resources\Deals\DealResource;
 use App\Http\Utils\RulesChecker;
-use App\Models\Address;
-use App\Models\Advertisement;
-use App\Models\Deal;
-use App\Models\DealStatus;
+use App\Models\Addresses\Address;
+use App\Models\Advertisement\Advertisement;
+use App\Models\Deals\Deal;
+use App\Models\Deals\DealStatus;
 
 class DealController extends Controller
 {
@@ -180,10 +180,12 @@ class DealController extends Controller
     public function me()
     {
         $user = auth()->user();
-        $query = Deal::select('deals.*')->where('deals.user_id', $user->id);
+        $query = Deal::select('deals.*');
         if ($user->role->code === 'owner')
             $query->join('advertisements', 'advertisements.id', '=', 'deals.advertisement_id')
                 ->where('advertisements.user_id', $user->id);
+        else
+            $query->where('deals.user_id', $user->id);
         return response(DealResource::collection($query->simplePaginate()), 200);
     }
 
