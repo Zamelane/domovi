@@ -8,6 +8,7 @@ use App\Exceptions\NotFoundException;
 use App\Http\Requests\User\UserCreateRequest;
 use App\Http\Requests\User\UserEditRequest;
 use App\Http\Requests\User\UserRequest;
+use App\Http\Resources\Users\UserFullResource;
 use App\Http\Resources\Users\UserResource;
 use App\Models\User\Role;
 use App\Models\User\User;
@@ -20,22 +21,25 @@ class UserController extends Controller
      */
     public function me()
     {
-        return response(UserResource::make(auth()->user()));
+        return response(UserFullResource::make(auth()->user()));
     }
 
     public function show(int $id)
     {
-        $user = User::find($id);
+        $showUser = User::find($id);
 
-        if (!$user)
+        if (!$showUser)
             throw new NotFoundException("User");
 
-        if (auth()->user()->role->code === 'user') {
-            if ($user->role->code === 'admin')
+        $user = auth()->user();
+
+        if (!$user || array_search($user->role->code,  ['user', 'owner']) !== false) {
+            if ($showUser->role->code === 'admin')
                 throw new ForbiddenForYouException();
+            return response(UserResource::make($showUser));
         }
 
-        return response(UserResource::make($user));
+        return response(UserFullResource::make($showUser));
     }
 
     public function showAll() {
@@ -61,7 +65,7 @@ class UserController extends Controller
             else
                 $query->whereNotIn('role_id', $rolesIds);
         }
-        return response(UserResource::collection($query->simplePaginate()));
+        return response(UserFullResource::collection($query->simplePaginate()));
     }
 
     public function edit(UserEditRequest $request, int $id = null)

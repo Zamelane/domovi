@@ -51,11 +51,19 @@ Route::group([
     $users->middleware('check.role:^manager')->group(function ($usersAll) {
         $usersAll->get('',       'showAll');
         $usersAll->get('search', 'search' );
-        $usersAll->prefix('{id}')->group(function ($user) {
-            $user->get('', 'show')->where('id', '[0-9]+');
-        });
     });
+
     $users->middleware('check.role:^admin')->post('create', 'create');
+});
+
+// Публичные роуты пользователей
+Route::group([
+    "controller" => UserController::class,
+    "prefix" => "users"
+], function ($users) {
+    $users->prefix('{id}')->group(function ($user) {
+        $user->get('', 'show')->where('id', '[0-9]+');
+    });
 });
 
 // Управление объявлениями

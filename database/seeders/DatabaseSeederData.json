@@ -380,6 +380,10 @@
             "description": "Ожидает назначения агента"
         },
         {
+            "code": "awaiting_payment",
+            "description": "Ожидает оплаты"
+        },
+        {
             "code": "completed",
             "description": "Успешно завершена"
         },

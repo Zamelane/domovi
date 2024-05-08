@@ -59,6 +59,16 @@ class User extends Authenticatable implements JWTSubject
             throw new ApiException(401, 'You have not passed moderation');
     }
 
+    public function full_name()
+    {
+        return $this->first_name . " " .
+            mb_substr($this->last_name, 0, 1) . "."
+            . ($this->patronymic ?
+                mb_substr($this->patronymic, 0, 1) . "."
+                : ""
+            );
+    }
+
     /** Связи **/
     // User <--> Role
     public function role()
