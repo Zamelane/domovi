@@ -100,11 +100,13 @@ class AdvertisementController extends Controller
         if (!$advertisement)
             throw new NotFoundException("Advertisement");
 
+        $user = auth()->user();
         // TODO: сделать проверку, что менеджер обрабатывал сделку и тоже имеет доступ (как и админ)
-        if ($advertisement->is_deleted === true
-            || $advertisement->is_moderated !== true
-            || $advertisement->is_archive === true)
-            if ($advertisement->user_id !== (auth()->user()->id ?? null))
+        if ($advertisement->is_deleted == true
+            || $advertisement->is_moderated != true
+            || $advertisement->is_archive == true)
+            if (!$user || $advertisement->user_id !== ($user->id ?? null)
+                && array_search($user->role->code, ['admin', 'manager']) === false)
                 throw new ForbiddenForYouException();
 
         return response(AdvertisementResource::make($advertisement), 200);

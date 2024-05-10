@@ -33,6 +33,7 @@ return new class extends Migration
             $table->enum       ('transaction_type', $transaction_types);
             $table->integer    ('area'                                );
             $table->enum       ('measurement_type', $measurement_types);
+            $table->text       ('description'                         )->nullable()->default(null);
             $table->boolean    ('is_active'                           )            ->default(false);
             $table->boolean    ('is_moderated'                        )->nullable()->default(null);
             $table->boolean    ('is_deleted'                          )->default(false);

@@ -22,7 +22,8 @@ class AdvertisementResource extends JsonResource
             "detailed" => [
                 "area"             => $this->area,
                 "measurement_type" => $this->measurement_type,
-                "images"           => ImageResource::collection($this->photos)
+                "images"           => ImageResource::collection($this->photos),
+                "description"      => $this->description,
             ],
             "filters"          => FilterResource::collection($this->ad_filter_values),
             "is_active"        => $this->is_active,

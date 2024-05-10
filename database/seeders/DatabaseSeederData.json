@@ -374,6 +374,24 @@
             "is_commercial": true
         }
     ],
+    "Office" : [
+        {
+            "name": "На южном",
+            "is_active": true,
+            "Addresss": [
+                {
+                    "house": 120,
+                    "building": 1,
+                    "Street": {
+                        "name": "Сибирская",
+                        "City": {
+                            "name": "Томск"
+                        }
+                    }
+                }
+            ]
+        }
+    ],
     "DealStatuses": [
         {
             "code": "awaiting_agent",
@@ -390,6 +408,22 @@
         {
             "code": "closed",
             "description": "Закрыта досрочно"
+        }
+    ],
+    "Advertisement": [
+        {
+            "user_id": 3,
+            "address_id": 1,
+            "advertisement_type_id": 1,
+            "transaction_type": "order",
+            "area": 53,
+            "measurement_type": "m2",
+            "description": "Уютная квартирка",
+            "is_active": true,
+            "is_moderated": true,
+            "is_deleted": false,
+            "is_archive": false,
+            "cost": 5000000
         }
     ]
 }

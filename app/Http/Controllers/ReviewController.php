@@ -72,7 +72,7 @@ class ReviewController extends Controller
     {
         $query = Review::where('is_moderation', null);
         return response([
-            'reviews' => ReviewMinResource::collection($query->simplePaginate(15)),
+            'reviews' => ReviewResource::collection($query->simplePaginate(15)),
             "allPages" => ceil($query->count() / 15)
         ], 200);
     }

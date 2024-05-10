@@ -9,7 +9,7 @@ class OfficeCreateRequest extends ApiRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|unique:offices,name',
+            'name' => 'unique:offices,name',
             'work_days.*.code' => 'required|in:monday,tuesday,wednesday,thursday,friday,saturday,sunday',
             'work_days.*.open_time' => 'required|date_format:H:i',
             'work_days.*.close_time' => 'required|date_format:H:i|after:open_time',

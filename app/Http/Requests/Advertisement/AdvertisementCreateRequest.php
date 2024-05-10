@@ -19,6 +19,7 @@ class AdvertisementCreateRequest extends ApiRequest
             'structure'             => 'integer',
             'building'              => 'integer',
             'apartament'            => 'integer',
+            'description'           => 'string|min:10',
             'is_active'             => 'boolean',
             'cost'                  => 'required|decimal:0,2|min:0|max:99999999999999.99',
             'photos'                => 'array',

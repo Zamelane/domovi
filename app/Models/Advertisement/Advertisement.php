@@ -27,7 +27,8 @@ class Advertisement extends Model
         "is_moderated",
         "is_deleted",
         "is_archive",
-        "cost"
+        "cost",
+        "description"
     ];
 
     /**

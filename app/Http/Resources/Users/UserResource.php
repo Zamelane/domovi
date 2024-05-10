@@ -17,7 +17,7 @@ class UserResource extends JsonResource
         ];
 
         $role = Role::find($this->role_id)->code;
-        if ($role !== 'user') {
+        if ($role !== 'user' && $role !== 'owner') {
             $response["login"] = $this->login;
         }
 

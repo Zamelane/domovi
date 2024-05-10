@@ -81,7 +81,7 @@ class UserController extends Controller
         $editCredentials = $request->all();
         $currUser = auth()->user();
         if (array_search($currUser->role->code, ["user", "owner"]) > -1) {
-            if ($currUser->id !== $id)
+            if ($currUser->id !== $editUser->id)
                 throw new ForbiddenForYouException();
             $editCredentials = request(["first_name", "last_name", "middle_name"]);
         } else {

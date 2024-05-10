@@ -3,13 +3,16 @@
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Addresses\Address;
 use App\Models\Addresses\City;
 use App\Models\Addresses\Street;
+use App\Models\Advertisement\Advertisement;
 use App\Models\Advertisement\AdvertisementType;
 use App\Models\Advertisement\AdvertisementTypeFilter;
 use App\Models\Deals\DealStatus;
 use App\Models\Filters\Filter;
 use App\Models\Filters\FilterValue;
+use App\Models\Office\Office;
 use App\Models\User\Role;
 use App\Models\User\User;
 use Illuminate\Database\Seeder;
@@ -19,13 +22,16 @@ class DatabaseSeeder extends Seeder
     protected $classes = [
         "AdvertisementTypeFilter" => AdvertisementTypeFilter::class,
         "AdvertisementType" => AdvertisementType::class,
+        "Advertisement" => Advertisement::class,
         "Filter" => Filter::class,
         "FilterValue" => FilterValue::class,
         "User" => User::class,
         "Role" => Role::class,
         "DealStatuses" => DealStatus::class,
         "Street" => Street::class,
-        "City" => City::class
+        "City" => City::class,
+        "Office" => Office::class,
+        "Address" => Address::class
     ];
     public function run(): void
     {
