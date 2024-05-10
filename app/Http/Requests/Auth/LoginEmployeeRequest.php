@@ -9,8 +9,8 @@ class LoginEmployeeRequest extends ApiRequest
     public function rules(): array
     {
         return [
-            'login' => 'required|string|min:8',
-            'password' => 'required|string|min:8'
+            'login' => 'required|string|min:8|max:32',
+            'password' => 'required|string|min:8|max:255'
         ];
     }
 }

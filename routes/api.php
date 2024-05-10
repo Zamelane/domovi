@@ -219,6 +219,6 @@ Route::group([
 });
 
 // Если подходящего роутера не нашлось
-Route::get('/{any}', function () {
+Route::any('/{any}', function () {
     throw new ApiException(404, 'Not found');
 });
